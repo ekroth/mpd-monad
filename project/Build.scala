@@ -5,6 +5,6 @@ object build extends Build {
   lazy val common = Project(id = "mpd-monad",
                             base = file("common"))
 
-  /*lazy val android = Project(id = "mpd-monad-android",
-                         base = file("android")) dependsOn(common)*/
+  lazy val web = Project(id = "mpd-web",
+                         base = file("web")) dependsOn(common)
 }
