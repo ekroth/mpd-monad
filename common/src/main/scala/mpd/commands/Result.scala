@@ -3,9 +3,9 @@ package mpd.commands
 import scalaz.Validation
 import scala.concurrent.Promise
 
-object Result extends Result
+object Result extends ResultFunctions
 
-trait Result {
+trait ResultFunctions {
   type Result[A, B] = Promise[Validation[A, B]]
   case class OK()
   case class ACK()
