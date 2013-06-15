@@ -1,4 +1,4 @@
-name := "mpd-monad"
+name := "mpd-common"
 
 scalaVersion := "2.10.1"
 
