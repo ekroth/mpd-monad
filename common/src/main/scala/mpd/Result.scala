@@ -1,4 +1,4 @@
-package mpd.commands
+package mpd
 
 import scalaz.Validation
 import scala.concurrent.Promise
