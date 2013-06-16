@@ -1,17 +1,16 @@
 package mpd
 
-import scalaz.Validation
+import scalaz.{ Validation => Val }
 import scala.concurrent.Future
 
-object Result extends ResultFunctions
+object Result extends ResultTypes
 
-trait ResultFunctions {
-  type Result[A, B] = Future[Validation[A, B]]
+trait ResultTypes {
   sealed trait Failed
   case class OK()
   case class ACK() extends Failed
   case class Timeout() extends Failed
-  type OKResult = Result[Failed, OK]
-  type PossibleACK = Result[Failed, Unit]
-  type PossibleOK = Result[Unit, OK]
+  type OKResult = Val[Failed, OK]
+  type PossibleACK = Val[Failed, Unit]
+  type PossibleOK = Val[Unit, OK]
 }

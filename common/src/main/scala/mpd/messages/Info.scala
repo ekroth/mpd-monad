@@ -3,13 +3,14 @@ package mpd.messages
 import mpd.Server
 
 import mpd.Result._
-import mpd.ServerComponent
+import mpd.Server._
 
 object Info extends InfoTypes
 
 trait InfoTypes {
+
+  trait InfoMessages extends ServerMessages
+  trait InfoActorMessages extends InfoMessages
 }
 
-trait InfoComponent extends ServerComponent {
-  abstract override def supported = super.supported ++ Set()
-}
+

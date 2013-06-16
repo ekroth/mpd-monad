@@ -6,25 +6,28 @@ object Server extends ServerTypes
 
 trait ServerTypes {
   case class Raw(s: String)
-}
 
-trait AskComponent {
-  def ask(msg: Any): Future[Any]
-  def tell(msg: Any): Unit
-}
+  trait ActorComponent {
+    def actor: BasicActor
 
-trait ServerComponent {
-  def raw(s: String): Future[Any]
-  def supported: Set[String]
-}
-
-trait ServerImpl extends ServerComponent {
-  self: AskComponent =>
-  import Server._
-
-  override def raw(s: String) = {
-    self ask Raw(s)
+    trait BasicActor {
+      def ask(msg: Any): Future[Any]
+      def tell(msg: Any): Unit
+    }
   }
 
-  override val supported = Set.empty[String]
+  trait ServerMessages {
+    def raw(s: String): Future[Any]
+    def supported: Set[String]
+  }
+
+  trait ServerActorMessages extends ServerMessages {
+    self: ActorComponent =>
+
+    override def raw(s: String) = {
+      actor ask Raw(s)
+    }
+
+    override def supported = Set.empty[String]
+  }
 }
