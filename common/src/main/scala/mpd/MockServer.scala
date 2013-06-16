@@ -1,27 +1,27 @@
-package mpd.mock
-
-import mpd.Server
-import mpd.commands.Commands
+package mpd
 
 import scala.concurrent._
 
-class MockServer extends Server with Commands {
+import scalaz._
+
+import mpd.messages.Admin._
+import mpd.messages.AdminComponent
+import mpd.Result._
+
+object Mock extends MockTypes
+
+trait MockTypes {
   import ExecutionContext.Implicits.global
-  override val isConnected = true
-  override def command(s: String) = s match {
-    case "commands" => future { supported.value.get.get.mkString("", "\n", "OK\n") }
-    case _ => ???
+  trait MockServer extends ServerComponent {
+    override def raw(s: String) = future { None }
+    override def supported = Set.empty
   }
-  override def batch(xs: Traversable[String]) = ???
-  override val supported = future { Set("commands") }
+
+  trait MockAdmin extends AdminComponent {
+    def disableoutput(id: Int): OKResult = future { Success(OK()) }
+    def enableoutput(id: Int): OKResult = future { Success(OK()) }
+    def kill(): PossibleACK = future { Success(()) }
+    def update(path: Option[String]): Unit = ???
+  }
 }
-
-
-
-
-
-
-
-
-
 
