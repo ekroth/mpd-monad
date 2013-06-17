@@ -30,21 +30,9 @@ trait AdminTypes {
   trait AdminActorMessages extends AdminMessages {
     self: ActorComponent =>
 
-    override def disableoutput(id: Int) = {
-      (actor ask DisableOutput(id)).mapTo[OKResult]
-    }
-
-    override def enableoutput(id: Int) = {
-      (actor ask EnableOutput(id)).mapTo[OKResult]
-    }
-
-    override def kill() = {
-      (actor ask Kill()).mapTo[PossibleACK]
-    }
-
-    override def update(path: Option[String]) = {
-      actor tell path
-    }
+    override def disableoutput(id: Int) = (actor ask DisableOutput(id)).mapTo[OKResult]
+    override def enableoutput(id: Int) = (actor ask EnableOutput(id)).mapTo[OKResult]
+    override def kill() = (actor ask Kill()).mapTo[PossibleACK]
+    override def update(path: Option[String]) = actor tell path
   }
 }
-

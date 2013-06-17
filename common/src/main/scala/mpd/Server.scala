@@ -24,10 +24,7 @@ trait ServerTypes {
   trait ServerActorMessages extends ServerMessages {
     self: ActorComponent =>
 
-    override def raw(s: String) = {
-      actor ask Raw(s)
-    }
-
+    override def raw(s: String) = actor ask Raw(s)
     override def supported = Set.empty[String]
   }
 }
