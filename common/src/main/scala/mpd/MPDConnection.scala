@@ -75,10 +75,12 @@ trait MPDConnectionTypes {
       @tailrec def readEnd(br: BufferedReader, out: Vector[String]): Failure \/ Vector[String] = {
         val line = br.readLine
 
-        if (line eq null) Unknown("empty read").left
-        else if (line contains ACK) ACKd().left
-        else if (line contains OK) out.right
-        else readEnd(br, out :+ line)
+	line match {
+	  case null => Unknown("empty read").left
+	  case x if (x contains "ACK") => ACKd().left
+	  case x if (x contains "OK") => out.right
+	  case _ => readEnd(br, out :+ line)
+	}
       }
 
       for (
