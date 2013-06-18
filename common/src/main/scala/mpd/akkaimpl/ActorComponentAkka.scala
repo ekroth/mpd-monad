@@ -6,20 +6,17 @@ import akka.actor.ActorRef
 import akka.pattern.ask
 import akka.util.Timeout
 
-import mpd.Server._
+import mpd.messages._
 
-object ActorComponentAkka extends AkkaTypes
+trait ActorComponentAkka extends ActorComponent {
+  override def actor = new BasicActorImpl
 
-trait AkkaTypes {
-  trait ActorComponentAkka extends ActorComponent {
-    override def actor = new BasicActorImpl
+  class BasicActorImpl extends BasicActor {
+    //val actor: ActorRef = ???
+    //implicit val timeout: Timeout = ???
 
-    class BasicActorImpl extends BasicActor {
-      //val actor: ActorRef = ???
-      //implicit val timeout: Timeout = ???
-
-      override def ask(msg: Any) = ask(actor, msg)
-      override def tell(msg: Any) = tell(actor, msg)
-    }
+    override def ask(msg: Any) = ask(actor, msg)
+    override def tell(msg: Any) = tell(actor, msg)
   }
 }
+

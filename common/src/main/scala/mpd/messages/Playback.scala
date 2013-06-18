@@ -2,37 +2,35 @@ package mpd.messages
 
 import scala.concurrent.Future
 
-import mpd.Server
 import mpd.Result._
-import mpd.Server._
 
-object Playback extends PlaybackTypes
-
-trait PlaybackTypes {
+object PlaybackPackets {
   case class Crossfade(i: Int)
   case class Next()
   case class Pause(p: Boolean)
   case class Play(i: Int)
+}
 
-  trait PlaybackMessages extends ServerMessages {
-    def crossfade(i: Int): Future[OKResult]
-    def next(): Future[OKResult]
-    def pause(p: Boolean): Future[OKResult]
-    def play(i: Int): Future[OKResult]
+import PlaybackPackets._
 
-    abstract override def supported = super.supported ++ Set(
-      "crossfade",
-      "next",
-      "pause",
-      "play")
-  }
+trait PlaybackMessages extends ServerMessages {
+  def crossfade(i: Int): Future[DefaultOK]
+  def next(): Future[DefaultOK]
+  def pause(p: Boolean): Future[DefaultOK]
+  def play(i: Int): Future[DefaultOK]
 
-  trait PlaybackActorMessages extends PlaybackMessages {
-    self: ActorComponent =>
+  abstract override def required = super.required ++ Set(
+    "crossfade",
+    "next",
+    "pause",
+    "play")
+}
 
-    override def crossfade(i: Int) = (actor ask Crossfade(i)).mapTo[OKResult]
-    override def next() = (actor ask Next()).mapTo[OKResult]
-    override def pause(p: Boolean) = (actor ask Pause(p)).mapTo[OKResult]
-    override def play(i: Int) = (actor ask Play(i)).mapTo[OKResult]
-  }
+trait PlaybackActorMessages extends PlaybackMessages {
+  self: ActorComponent =>
+
+  override def crossfade(i: Int) = ask[DefaultOK](Crossfade(i))
+  override def next() = ask[DefaultOK](Next())
+  override def pause(p: Boolean) = ask[DefaultOK](Pause(p))
+  override def play(i: Int) = ask[DefaultOK](Play(i))
 }
