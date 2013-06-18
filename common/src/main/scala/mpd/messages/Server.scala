@@ -2,8 +2,11 @@ package mpd.messages
 
 import scala.concurrent.Future
 
-case class Raw(s: String)
+object ServerPackets {
+  case class Raw(s: String)
+}
 
+import ServerPackets._
 trait ActorComponent {
   def actor: BasicActor
 
@@ -20,13 +23,13 @@ trait ActorComponent {
 
 trait ServerMessages {
   def raw(s: String): Future[Any]
-  def supported: Set[String]
+  def required: Set[String]
 }
 
 trait ServerActorMessages extends ServerMessages {
   self: ActorComponent =>
 
-    override def raw(s: String) = actor ask Raw(s)
-  override def supported = Set.empty[String]
+  override def raw(s: String) = actor ask Raw(s)
+  override def required = Set.empty[String]
 }
 

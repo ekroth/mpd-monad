@@ -1,1 +1,1 @@
-package object mpd extends ResultTypes
+package object mpd

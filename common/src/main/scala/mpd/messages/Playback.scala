@@ -14,12 +14,12 @@ object PlaybackPackets {
 import PlaybackPackets._
 
 trait PlaybackMessages extends ServerMessages {
-  def crossfade(i: Int): Future[OKResult]
-  def next(): Future[OKResult]
-  def pause(p: Boolean): Future[OKResult]
-  def play(i: Int): Future[OKResult]
+  def crossfade(i: Int): Future[DefaultOK]
+  def next(): Future[DefaultOK]
+  def pause(p: Boolean): Future[DefaultOK]
+  def play(i: Int): Future[DefaultOK]
 
-  abstract override def supported = super.supported ++ Set(
+  abstract override def required = super.required ++ Set(
     "crossfade",
     "next",
     "pause",
@@ -29,8 +29,8 @@ trait PlaybackMessages extends ServerMessages {
 trait PlaybackActorMessages extends PlaybackMessages {
   self: ActorComponent =>
 
-  override def crossfade(i: Int) = ask[OKResult](Crossfade(i))
-  override def next() = ask[OKResult](Next())
-  override def pause(p: Boolean) = ask[OKResult](Pause(p))
-  override def play(i: Int) = ask[OKResult](Play(i))
+  override def crossfade(i: Int) = ask[DefaultOK](Crossfade(i))
+  override def next() = ask[DefaultOK](Next())
+  override def pause(p: Boolean) = ask[DefaultOK](Pause(p))
+  override def play(i: Int) = ask[DefaultOK](Play(i))
 }
