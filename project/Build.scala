@@ -29,6 +29,6 @@ object build extends Build {
         )
 
 
-        play.Project(projName + "-web", appVersion, appDependencies,path = file("web")).settings() //.dependsOn(common)
+        play.Project(projName + "-web", appVersion, appDependencies, path = file("web")).settings() //.dependsOn(common)
     }
 }
