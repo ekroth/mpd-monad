@@ -1,3 +1,3 @@
 package mpd
 
-package object mock extends mock.MockTypes 
+package object mock extends mock.MockTypes
