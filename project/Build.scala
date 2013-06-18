@@ -3,32 +3,32 @@ import Keys._
 
 object build extends Build {
   val projName = "mpd"
-
-  val mpdSettings = Defaults.defaultSettings ++ Seq(
+  val sharedSettings = Seq(
     scalaVersion := "2.10.1",
-    scalacOptions ++= Seq("-unchecked", "-deprecation")
-  ) 
+    scalacOptions ++= Seq("-unchecked", "-deprecation"))
 
-    val common = Project(
-      projName + "-common",
-      file("common"),
-      settings = build.mpdSettings ++ Seq(
+  val common = {
+    val name = "common"
+
+    Project(
+      projName + "-" + name,
+      file(name),
+      settings = Defaults.defaultSettings ++ sharedSettings ++ Seq(
 	libraryDependencies += "org.scalaz" %% "scalaz-core" % "7.0.0",
 	resolvers += "Typesafe Repository" at "http://repo.typesafe.com/typesafe/snapshots/",
-	libraryDependencies += "com.typesafe.akka" %% "akka-actor" % "2.1.0")
-    )
+	libraryDependencies += "com.typesafe.akka" %% "akka-actor" % "2.1.0"))
+  }
 
-    val web = {
-      import play.Project._
-        val appVersion      = "1.0-SNAPSHOT"
+  val web = {
+    import play.Project._
+    val name = "web"
+    val appVersion = "1.0-SNAPSHOT"
 
-        val appDependencies = Seq(
-            // Add your project dependencies here,
-            jdbc,
-            anorm
-        )
+    val appDependencies = Seq(
+      // Add your project dependencies here,
+      jdbc,
+      anorm)
 
-
-        play.Project(projName + "-web", appVersion, appDependencies, path = file("web")).settings().dependsOn(common)
-    }
+    play.Project(projName + "-" + name, appVersion, appDependencies, path = file(name)).settings(sharedSettings:_*).dependsOn(common)
+  }
 }
