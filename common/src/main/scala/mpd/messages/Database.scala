@@ -2,16 +2,17 @@ package mpd.messages
 
 import scala.concurrent.Future
 
+import mpd.FileSystem._
 import mpd.Result._
 
 object DatabasePackets {
-  case class URI(str: String)
+  case class ListAll(uri: URI)
 }
 
 import DatabasePackets._
 
 trait DatabaseMessages extends ServerMessages {
-  def listAll(uri: URI): Future[DefaultT[Any]]
+  def listAll(uri: URI): Future[DefaultT[List[URI]]]
 
   abstract override def required = super.required ++ Set(
     "count",
@@ -31,5 +32,5 @@ trait DatabaseMessages extends ServerMessages {
 trait DatabaseActorMessages extends DatabaseMessages {
   self: ActorComponent =>
 
-  override def listAll(uri: URI) = ask[DefaultT[Any]](uri)
+  override def listAll(uri: URI) = ask[DefaultT[List[URI]]](ListAll(uri))
 }

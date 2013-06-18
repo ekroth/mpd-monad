@@ -5,7 +5,7 @@ object build extends Build {
   val projName = "mpd"
   val sharedSettings = Seq(
     scalaVersion := "2.10.1",
-    scalacOptions ++= Seq("-unchecked", "-deprecation"))
+    scalacOptions ++= Seq("-unchecked", "-deprecation", "-feature"))
 
   val common = {
     val name = "common"
