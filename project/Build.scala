@@ -15,7 +15,7 @@ object build extends Build {
       settings = build.mpdSettings ++ Seq(
 	libraryDependencies += "org.scalaz" %% "scalaz-core" % "7.0.0",
 	resolvers += "Typesafe Repository" at "http://repo.typesafe.com/typesafe/snapshots/",
-	libraryDependencies += "com.typesafe.akka" %% "akka-actor" % "2.2-SNAPSHOT")
+	libraryDependencies += "com.typesafe.akka" %% "akka-actor" % "2.1.0")
     )
 
     val web = {
@@ -29,6 +29,6 @@ object build extends Build {
         )
 
 
-        play.Project(projName + "-web", appVersion, appDependencies, path = file("web")).settings() //.dependsOn(common)
+        play.Project(projName + "-web", appVersion, appDependencies, path = file("web")).settings().dependsOn(common)
     }
 }
