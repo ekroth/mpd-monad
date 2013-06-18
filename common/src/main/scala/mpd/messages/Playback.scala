@@ -4,10 +4,14 @@ import scala.concurrent.Future
 
 import mpd.Result._
 
-case class Crossfade(i: Int)
-case class Next()
-case class Pause(p: Boolean)
-case class Play(i: Int)
+object PlaybackPackets {
+  case class Crossfade(i: Int)
+  case class Next()
+  case class Pause(p: Boolean)
+  case class Play(i: Int)
+}
+
+import PlaybackPackets._
 
 trait PlaybackMessages extends ServerMessages {
   def crossfade(i: Int): Future[OKResult]

@@ -4,11 +4,14 @@ import scala.concurrent.Future
 
 import mpd.Result._
 
-case class DisableOutput(id: Int)
-case class EnableOutput(id: Int)
-case class Kill()
-case class Update(path: Option[String])
+object AdminPackets {
+  case class DisableOutput(id: Int)
+  case class EnableOutput(id: Int)
+  case class Kill()
+  case class Update(path: Option[String])
+}
 
+import AdminPackets._
 trait AdminMessages extends ServerMessages {
   def disableoutput(id: Int): Future[OKResult]
   def enableoutput(id: Int): Future[OKResult]
@@ -28,6 +31,6 @@ trait AdminActorMessages extends AdminMessages {
   override def disableoutput(id: Int) = ask[OKResult](DisableOutput(id))
   override def enableoutput(id: Int) = ask[OKResult](EnableOutput(id))
   override def kill() = ask[PossibleACK](Kill())
-  override def update(path: Option[String]) = tell(path)
+  override def update(path: Option[String]) = tell(Update(path))
 }
 

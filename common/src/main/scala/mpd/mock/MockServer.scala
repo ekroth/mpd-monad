@@ -11,12 +11,14 @@ trait ActorComponentMock extends ActorComponent {
   override def actor = new BasicActorImpl()
 
   class BasicActorImpl() extends BasicActor {
+    import mpd.messages.{ AdminPackets => AP }
+    import mpd.messages.{ PlaybackPackets => PP }
     override def ask(msg: Any) = future {
       msg match {
 
-        case Kill() => Success(())
+        case AP.Kill() => Success(())
 
-        case Next() => Success(())
+        case PP.Next() => Success(())
 
         case _ => Success("mock")
       }
@@ -25,3 +27,9 @@ trait ActorComponentMock extends ActorComponent {
     override def tell(msg: Any) = ()
   }
 }
+
+
+
+
+
+
