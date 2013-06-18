@@ -10,6 +10,11 @@ trait ServerTypes {
   trait ActorComponent {
     def actor: BasicActor
 
+    final def ask[T](x: Any)(implicit tag: scala.reflect.ClassTag[T]) = 
+      (actor ask x).mapTo[T]
+
+    final def tell(x: Any) = actor tell x
+
     trait BasicActor {
       def ask(msg: Any): Future[Any]
       def tell(msg: Any): Unit

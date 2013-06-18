@@ -30,9 +30,9 @@ trait PlaybackTypes {
   trait PlaybackActorMessages extends PlaybackMessages {
     self: ActorComponent =>
 
-    override def crossfade(i: Int) = (actor ask Crossfade(i)).mapTo[OKResult]
-    override def next() = (actor ask Next()).mapTo[OKResult]
-    override def pause(p: Boolean) = (actor ask Pause(p)).mapTo[OKResult]
-    override def play(i: Int) = (actor ask Play(i)).mapTo[OKResult]
+    override def crossfade(i: Int) = ask[OKResult](Crossfade(i))
+    override def next() = ask[OKResult](Next())
+    override def pause(p: Boolean) = ask[OKResult](Pause(p))
+    override def play(i: Int) = ask[OKResult](Play(i))
   }
 }

@@ -25,7 +25,7 @@ object build extends Build {
     val appVersion = "1.0-SNAPSHOT"
 
     val appDependencies = Seq(
-      // Add your project dependencies here,
+      // Add your project dependencies here,1
       jdbc,
       anorm)
 

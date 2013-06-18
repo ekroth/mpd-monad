@@ -1,4 +1,4 @@
-package mpd
+package mpd.mock
 
 import scala.concurrent._
 
@@ -7,9 +7,7 @@ import scalaz._
 import mpd.Server._
 import mpd.Result._
 
-object Mock extends MockTypes
-
-trait MockTypes {
+trait MockServerTypes {
   import ExecutionContext.Implicits.global
   trait ActorComponentMock extends ActorComponent {
     override def actor = new BasicActorImpl()

@@ -9,14 +9,11 @@ import java.io.InputStreamReader
 import java.io.OutputStreamWriter
 import java.io.BufferedReader
 
-trait MPDConnectionTypes {
+object MPDInternal extends MPDInternalTypes
+trait MPDInternalTypes {
   val OK = "OK"
   val ACK = "ACK"
   val BuffSize = 1024
-
-  // MAKE REGEXP FOR THIS
-  // ACK [error@command_listNum] {current_command} message_text\n
-  // OK MPD version\n
   val OKConnect = """OK MPD (.*)""".r
   val ACKConnect = """ACK \[(.*)@(.*)] {(.*)}(.*)""".r
 
@@ -24,8 +21,11 @@ trait MPDConnectionTypes {
   case class Disconnected() extends Failure
   case class ACKd() extends Failure
   case class Unknown(s: String) extends Failure
+}
 
+trait MPDConnectionTypes {
   import Scalaz._
+  import MPDInternal._
 
   object MPDConnection {
     def connect(addr: String, port: Int): Failure \/ MPDConnection = {
