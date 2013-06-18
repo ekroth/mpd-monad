@@ -1,31 +1,27 @@
 package mpd.mock
 
 import scala.concurrent._
+import ExecutionContext.Implicits.global
 
 import scalaz._
 
-import mpd.Server._
-import mpd.Result._
+import mpd.messages._
 
-trait MockServerTypes {
-  import ExecutionContext.Implicits.global
-  trait ActorComponentMock extends ActorComponent {
-    override def actor = new BasicActorImpl()
+trait ActorComponentMock extends ActorComponent {
+  override def actor = new BasicActorImpl()
 
-    class BasicActorImpl() extends BasicActor {
-      import mpd.messages._
-      override def ask(msg: Any) = future {
-	msg match {
-	  
-	  case Admin.Kill() => Success(())
+  class BasicActorImpl() extends BasicActor {
+    override def ask(msg: Any) = future {
+      msg match {
 
-	  case Playback.Next() => Success(())
+        case Kill() => Success(())
 
-	  case _ => Success("mock")
-	}
+        case Next() => Success(())
+
+        case _ => Success("mock")
       }
-
-      override def tell(msg: Any) = ()
     }
+
+    override def tell(msg: Any) = ()
   }
 }

@@ -2,37 +2,32 @@ package mpd.messages
 
 import scala.concurrent.Future
 
-import mpd.Server
 import mpd.Result._
-import mpd.Server._
 
-object Admin extends AdminTypes
+case class DisableOutput(id: Int)
+case class EnableOutput(id: Int)
+case class Kill()
+case class Update(path: Option[String])
 
-trait AdminTypes {
-  case class DisableOutput(id: Int)
-  case class EnableOutput(id: Int)
-  case class Kill()
-  case class Update(path: Option[String])
+trait AdminMessages extends ServerMessages {
+  def disableoutput(id: Int): Future[OKResult]
+  def enableoutput(id: Int): Future[OKResult]
+  def kill(): Future[PossibleACK]
+  def update(path: Option[String]): Unit
 
-  trait AdminMessages extends ServerMessages {
-    def disableoutput(id: Int): Future[OKResult]
-    def enableoutput(id: Int): Future[OKResult]
-    def kill(): Future[PossibleACK]
-    def update(path: Option[String]): Unit
-
-    abstract override def supported = super.supported ++ Set(
-      "disableoutput",
-      "enableoutput",
-      "kill",
-      "update")
-  }
-
-  trait AdminActorMessages extends AdminMessages {
-    self: ActorComponent =>
-
-    override def disableoutput(id: Int) = ask[OKResult](DisableOutput(id))
-    override def enableoutput(id: Int) = ask[OKResult](EnableOutput(id))
-    override def kill() = ask[PossibleACK](Kill())
-    override def update(path: Option[String]) = tell(path)
-  }
+  abstract override def supported = super.supported ++ Set(
+    "disableoutput",
+    "enableoutput",
+    "kill",
+    "update")
 }
+
+trait AdminActorMessages extends AdminMessages {
+  self: ActorComponent =>
+
+  override def disableoutput(id: Int) = ask[OKResult](DisableOutput(id))
+  override def enableoutput(id: Int) = ask[OKResult](EnableOutput(id))
+  override def kill() = ask[PossibleACK](Kill())
+  override def update(path: Option[String]) = tell(path)
+}
+

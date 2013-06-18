@@ -1,3 +1,1 @@
-package object mpd extends MPDConnectionTypes
-  with ServerTypes
-  with ResultTypes
+package object mpd extends ResultTypes
