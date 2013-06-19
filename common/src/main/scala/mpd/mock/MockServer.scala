@@ -7,11 +7,7 @@ import scalaz._
 
 import mpd.messages._
 
-trait ActorComponentMock extends ActorComponent {
-  override def actor = new BasicActorImpl()
-
-  import mpd.FileSystem._
-
+trait ActorComponentMockStd extends ActorComponentMock {
   val fs = Map(
     "/" -> ("Music/" :: Nil),
     "/Music/" -> ("Analog/" :: "Electronic/" :: Nil),
@@ -20,8 +16,16 @@ trait ActorComponentMock extends ActorComponent {
     "/Music/Analog/Tuul/" -> ("Sober by lättöl.ogg" :: "Flowers and spirals.ogg" :: Nil),
     "/Music/Electronic/" -> ("Aphex twons/" :: Nil),
     "/Music/Electronic/Aphex twons/" -> ("Windowcleaner.flac" :: Nil))
-									    
+}
 
+trait ActorComponentMock extends ActorComponent {
+  import mpd.FileSystem._
+
+  override def actor = new BasicActorImpl()
+  val fs: Map[String, List[String]]
+
+  def reset() = ()
+									    
   class BasicActorImpl() extends BasicActor {
     import mpd.messages.{ AdminPackets => AP }
     import mpd.messages.{ PlaybackPackets => PP }

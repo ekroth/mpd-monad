@@ -14,9 +14,12 @@ object build extends Build {
       projName + "-" + name,
       file(name),
       settings = Defaults.defaultSettings ++ sharedSettings ++ Seq(
-	libraryDependencies += "org.scalaz" %% "scalaz-core" % "7.0.0",
 	resolvers += "Typesafe Repository" at "http://repo.typesafe.com/typesafe/snapshots/",
-	libraryDependencies += "com.typesafe.akka" %% "akka-actor" % "2.1.0"))
+	libraryDependencies ++= Seq("org.scalaz" %% "scalaz-core" % "7.0.0",
+				    "com.typesafe.akka" %% "akka-actor" % "2.1.0",
+				    "org.scalatest" % "scalatest_2.10" % "1.9.1" % "test")
+	)
+      )
   }
 
   val web = {
