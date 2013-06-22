@@ -18,7 +18,9 @@ object Application extends Controller {
   def index(cmd: String = "index") = Action {
     Ok(views.html.index(cmd))
   }
- 
+
+
+  
   def issueCmd[T](cmd: => T) = { 
     cmd
     Redirect("/")
