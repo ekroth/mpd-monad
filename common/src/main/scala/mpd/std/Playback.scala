@@ -6,7 +6,6 @@ import ExecutionContext.Implicits.global
 import mpd.{ MPDConnection => MPDC }
 import mpd.messages._
 
-
 trait PlaybackMessagesStd extends PlaybackMessages {
   import scalaz._
   import Scalaz._
@@ -15,8 +14,8 @@ trait PlaybackMessagesStd extends PlaybackMessages {
   override def stop() = raw("stop") map { _ => OK().right }
   override def previous() = raw("previous") map { _ => OK().right }
   override def next() = raw("next") map { _ => OK().right }
-  override def pause(p: Option[Boolean]) = 
+  override def pause(p: Option[Boolean]) =
     raw("pause" + p.map(" " + _.toMpd).getOrElse("")) map { _ => OK().right }
-  override def play(i: Option[Int]) = 
+  override def play(i: Option[Int]) =
     raw("play" + i.map(" " + _).getOrElse("")) map { _ => OK().right }
 }
