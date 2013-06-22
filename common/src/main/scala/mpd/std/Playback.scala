@@ -13,6 +13,8 @@ trait PlaybackMessagesStd extends PlaybackMessages {
 
   override def crossfade(i: Int) = raw(s"crossfade $i") map { _ => OK().right }
   override def next() = raw("next") map { _ => OK().right }
-  override def pause(p: Boolean) = raw("pause") map { _ => OK().right }
-  override def play(i: Int) = raw("play") map { _ => OK().right }
+  override def pause(p: Option[Boolean]) = 
+    raw("pause" + p.map(" " + _.toMpd).getOrElse("")) map { _ => OK().right }
+  override def play(i: Option[Int]) = 
+    raw("play" + i.map(" " + _).getOrElse("")) map { _ => OK().right }
 }
