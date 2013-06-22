@@ -12,6 +12,8 @@ trait PlaybackMessagesStd extends PlaybackMessages {
   import Scalaz._
 
   override def crossfade(i: Int) = raw(s"crossfade $i") map { _ => OK().right }
+  override def stop() = raw("stop") map { _ => OK().right }
+  override def previous() = raw("previous") map { _ => OK().right }
   override def next() = raw("next") map { _ => OK().right }
   override def pause(p: Option[Boolean]) = 
     raw("pause" + p.map(" " + _.toMpd).getOrElse("")) map { _ => OK().right }
