@@ -19,7 +19,7 @@ trait MpdComponent {
 trait ServerMessagesStd extends ServerMessages {
   self: MpdComponent =>
 
-  override def raw(s: String) = future {
+  override def raw(s: String) = future[Any] {
     mpd.con.writef(s)
   }
 
