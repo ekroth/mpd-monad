@@ -11,14 +11,8 @@ trait PlaybackMessagesStd extends PlaybackMessages {
   import scalaz._
   import Scalaz._
 
-  override def crossfade(i: Int): Future[DefaultOK] = ???
-  override def next(): Future[DefaultOK] = ???
-  override def pause(p: Boolean) = raw("pause") map { 
-    _ match {
-      case \/-(_) => OK().right
-      case -\/(x: Error) => x.left
-    }
-  }
-
-  override def play(i: Int): Future[DefaultOK] = ???
+  override def crossfade(i: Int) = raw(s"crossfade $i") map { _ => OK().right }
+  override def next() = raw("next") map { _ => OK().right }
+  override def pause(p: Boolean) = raw("pause") map { _ => OK().right }
+  override def play(i: Int) = raw("play") map { _ => OK().right }
 }
