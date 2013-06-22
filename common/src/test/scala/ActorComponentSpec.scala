@@ -8,6 +8,7 @@ import scalaz._
 import ExecutionContext.Implicits.global
 
 import mpd.mock._
+import mpd.actor._
 import mpd.messages._
 import mpd.FileSystem._
 
@@ -24,7 +25,7 @@ class ActorComponentSpec extends FunSpec with BeforeAndAfterEach {
   }
 
   val srv: ServerMessages with DatabaseMessages with ActorComponentMockTest =
-    new ServerActorMessages with DatabaseActorMessages with ActorComponentMockTest
+    new ServerMessagesActor with DatabaseMessagesActor with ActorComponentMockTest
 
   override def beforeEach() {
     srv.reset
@@ -34,7 +35,7 @@ class ActorComponentSpec extends FunSpec with BeforeAndAfterEach {
   describe("An ActorComponent(MockTest)") {
     describe("when listing database") {
       it("should be able to list db") {
-        val out = for {
+        for {
 	  (uri, ents) <- srv.fs
         } { 
 	  Await.result(srv.listAll(uri), 1.seconds) match {

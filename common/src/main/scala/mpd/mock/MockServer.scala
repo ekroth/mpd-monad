@@ -6,6 +6,7 @@ import ExecutionContext.Implicits.global
 import scalaz._
 
 import mpd.messages._
+import mpd.actor._
 
 trait ActorComponentMockStd extends ActorComponentMock {
   val fs = Map(
@@ -27,9 +28,9 @@ trait ActorComponentMock extends ActorComponent {
   def reset() = ()
 									    
   class BasicActorImpl() extends BasicActor {
-    import mpd.messages.{ AdminPackets => AP }
-    import mpd.messages.{ PlaybackPackets => PP }
-    import mpd.messages.{ DatabasePackets => DP }
+    import mpd.actor.{ AdminPackets => AP }
+    import mpd.actor.{ PlaybackPackets => PP }
+    import mpd.actor.{ DatabasePackets => DP }
     import Scalaz._
     override def ask(msg: Any) = future {
       msg match {

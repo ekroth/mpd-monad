@@ -1,7 +1,5 @@
 package mpd.messages
 
-import mpd.Result._
-
 object InfoPackets
 
 import InfoPackets._

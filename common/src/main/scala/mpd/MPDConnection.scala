@@ -1,33 +1,28 @@
 package mpd
 
-import scalaz._
-
 import scala.annotation.tailrec
 
 import java.net.{ Socket => JSocket }
-import java.io.InputStreamReader
-import java.io.OutputStreamWriter
-import java.io.BufferedReader
+import java.io.{ InputStreamReader, OutputStreamWriter, BufferedReader }
+
+import scalaz._
+
+import mpd.messages._
 
 final object MPDInternal extends MPDInternalTypes
-trait MPDInternalTypes {
+sealed trait MPDInternalTypes {
   val OK = "OK"
   val ACK = "ACK"
   val BuffSize = 1024
   val OKConnect = """OK MPD (.*)""".r
   val ACKConnect = """ACK [(.*)@(.*)] \{(.*)\}(.*)""".r
-
-  sealed trait Fail
-  case class Disconnected() extends Fail
-  case class ACKd() extends Fail
-  case class Unknown(s: String) extends Fail
 }
 
 import Scalaz._
-import MPDInternal._
 
 final object MPDConnection {
-  def connect(addr: String, port: Int): Fail \/ MPDConnection = {
+  def connect(addr: String, port: Int): DefaultT[MPDConnection] = {
+    import MPDInternal._
     try {
       val socket = new JSocket(addr, port)
       val in = new BufferedReader(new InputStreamReader(socket.getInputStream), BuffSize)
@@ -52,41 +47,42 @@ final case class MPDConnection(socket: JSocket, input: InputStreamReader, output
   val CmdBegin = "command_list_begin"
   val CmdEnd = "command_list_end"
 
-  def connected: Fail \/ Unit =
+  def connected: PossibleError =
     if (socket.isConnected && !socket.isClosed()) ().right
     else Disconnected().left
 
-  def batch[T](f: => T): Fail \/ T = {
+  def writeb(f: => PossibleError): DefaultT[PossibleError] = for {
+    _ <- write(CmdBegin)
+    v = f
+    _ <- write(CmdEnd)
+    _ = output.flush
+  } yield v
 
-    for {
-      _ <- write(CmdBegin)
-      v = f
-      _ <- write(CmdEnd)
-      _ = output.flush
-    } yield v
-  }
-
-  def write(cmd: String): Fail \/ Unit = try {
+  def write(cmd: String): PossibleError = try {
     output.write(s"""$cmd\n""").right
   } catch {
     case e: Throwable => Unknown(e.toString).left
   }
 
+  def writef(cmd: String) = writeb {
+    write(cmd)
+  }
+
   def flush = output.flush
 
-  def read(): Fail \/ Vector[String] = {
-    @tailrec def readEnd(br: BufferedReader, out: Vector[String]): Fail \/ Vector[String] =
+  def read(): DefaultT[Vector[String]] = {
+    @tailrec def readEnd(br: BufferedReader, out: Vector[String]): DefaultT[Vector[String]] =
       br.readLine match {
         case null => Unknown("empty read").left
-        case x if (x contains "ACK") => ACKd().left
+        case x if (x contains "ACK") => ACK().left
         case x if (x contains "OK") => out.right
         case x => readEnd(br, out :+ x)
       }
 
-    readEnd(new BufferedReader(input, BuffSize), Vector.empty)
+    readEnd(new BufferedReader(input, MPDInternal.BuffSize), Vector.empty)
   }
 
-  def disconnect(): Fail \/ Unit = {
+  def disconnect(): PossibleError = {
     if (connected.isRight) {
       try {
         socket.close.right
