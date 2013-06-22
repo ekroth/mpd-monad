@@ -3,14 +3,47 @@ package mpd.messages
 import scala.concurrent.Future
 
 trait PlaybackMessages extends ServerMessages {
+  /** Sets crossfading (mixing) between songs.
+   * @param i Sets the number of seconds to mix the two songs.
+   */
   def crossfade(i: Int): Future[DefaultOK]
-  def stop(): Future[DefaultOK]
-  def previous(): Future[DefaultOK]
+
+  /** Plays next song in playlist. */
   def next(): Future[DefaultOK]
+
+  /** Toggle pause / resume playing.
+   * @param p Should either be 1 (for paused) or 0 (for playing).
+   */
   def pause(p: Option[Boolean]): Future[DefaultOK]
+
+  /** Toggle pause / resume playing. */
   def pause(): Future[DefaultOK] = pause(None)
+
+  /** Begin playing the playlist.
+   * @param i The song to begin playing the playlist at, it is optional, the default is -1.
+   */
   def play(i: Option[Int]): Future[DefaultOK]
+
+  /** Begin playing the playlist. */
   def play(): Future[DefaultOK] = play(None)
+
+  /** Begin playing playlist.
+   * @param i The songid to begin the playlist playing at, it is optional, the default is 0.
+   */
+  def playid(i: Option[Int]): Future[DefaultOK] = ???
+
+  /** Plays previous song in playlist. */
+  def previous(): Future[DefaultOK]
+
+  // random
+  // repeat
+  // seek
+  // seekid
+  // setvol
+  
+  /** To halt playing. */
+  def stop(): Future[DefaultOK]
+  
 
   abstract override def required = super.required ++ Set(
     "crossfade",
