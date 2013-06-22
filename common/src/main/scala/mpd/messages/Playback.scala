@@ -49,5 +49,12 @@ trait PlaybackMessages extends ServerMessages {
     "crossfade",
     "next",
     "pause",
-    "play")
+    "play",
+    "previous",
+    "random",
+    "repeat",
+    "seek",
+    "seekid",
+    "setvol",
+    "stop")
 }
