@@ -26,4 +26,6 @@ trait ServerMessagesStd extends ServerMessages {
   override def read() = future {
     mpd.con.read
   }
+
+  override def required = Set.empty[String]
 }
