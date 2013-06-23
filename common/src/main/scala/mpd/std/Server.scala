@@ -16,7 +16,7 @@ trait MpdComponent {
   }
 }
 
-trait ServerMessagesStd extends ServerMessages {
+trait ServerMsgStd extends ServerMsg {
   self: MpdComponent =>
 
   override def raw(s: String) = future {

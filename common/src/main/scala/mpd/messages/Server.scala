@@ -3,7 +3,7 @@ package mpd.messages
 import scala.concurrent._
 import ExecutionContext.Implicits.global
 
-trait ServerMessages {
+trait ServerMsg {
   def raw(s: String): Future[PossibleError]
   def read(): Future[DefaultT[Vector[String]]]
   def wread(s: String) = for {

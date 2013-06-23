@@ -4,7 +4,7 @@ import scala.concurrent._
 
 import ExecutionContext.Implicits.global
 
-trait ServerMessagesDebug extends ServerMessages {
+trait ServerMsgDebug extends ServerMsg {
   def limit(s: String) = {
     val max = 64
     val l = s.length
