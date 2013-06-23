@@ -14,7 +14,7 @@ trait PlaylistMessagesStd extends PlaylistMessages {
     x =>
       try {
         for (v <- x) yield {
-          val r = """(.*): (.*)""".r
+          val r = """(\w*): (.*)""".r
           val s = (r.findAllMatchIn(v.mkString("\n")) map {
             str: scala.util.matching.Regex.Match => (str.group(1).toLowerCase -> str.group(2))
           }).toMap
