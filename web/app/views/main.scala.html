@@ -1,69 +1,17 @@
 @(title: String)
 
 <!DOCTYPE html>
-<html lang="en"><head><meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+<html lang="en">
+<head>
+	<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
     <meta charset="utf-8">
     <title>@title</title>
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <meta name="description" content="">
-    <meta name="author" content="">
+    <meta name="description" content="Music Player Daemon Web-GUI">
+    <meta name="author" content="Meris Bahtijaragic (@@3amice) & Andrée Ekroth (@@ekroth)">
 
     <!-- CSS -->
     <link href="@routes.Assets.at("stylesheets/bootstrap.min.css")"rel="stylesheet">
-    <style type="text/css">
-
-      /* Sticky footer styles
-      -------------------------------------------------- */
-
-      html,
-      body {
-        height: 100%;
-        /* The html and body elements cannot have any padding or margin. */
-      }
-
-      /* Wrapper for page content to push down footer */
-      #wrap {
-        min-height: 100%;
-        height: auto !important;
-        height: 100%;
-        /* Negative indent footer by it's height */
-        margin: 0 auto -60px;
-      }
-
-      /* Set the fixed height of the footer here */
-      #push,
-      #footer {
-        height: 60px;
-      }
-      #footer {
-        background-color: #f5f5f5;
-      }
-
-
-      /* Lastly, apply responsive CSS fixes as necessary */
-      @@media (max-width: 767px) {
-        #footer {
-          margin-left: -20px;
-          margin-right: -20px;
-          padding-left: 20px;
-          padding-right: 20px;
-         }
-       }
-
-
-      /* Custom page CSS
-      -------------------------------------------------- */
-      /* Not required for template or sticky footer method. */
-
-      .container {
-        width: auto;
-        max-width: 680px;
-      }
-      .container .credit {
-        margin: 20px 0;
-      }
-
-    </style>
     <link href="@routes.Assets.at("stylesheets/bootstrap-responsive.min.css")" rel="stylesheet">
 
     <!-- HTML5 shim, for IE6-8 support of HTML5 elements -->
@@ -71,60 +19,63 @@
       <script src="../assets/js/html5shiv.js"></script>
     <![endif]-->
 
-  <style type="text/css"></style></head>
+    <script type="text/javascript" src="@routes.Assets.at("javascripts/main.js")"></script>
+
+</head>
 
   <body> 
 
-
-    <!-- Part 1: Wrap all page content here -->
-    <div id="wrap">
-
       <!-- Begin page content -->
-      <div class="container"> 
-        <div class="page-header">
-          <h3>Web-GUI</h3>
+      <div class="container-fluid">
+      	<div class="row-fluid">
+        <div class="span12"> 
+          <h3 id="currSong">Fetching current song.</h3>
           <div class="btn-toolbar">
             <div class"btn-group">
-              <a class="btn" href="./prev"><i class="icon-step-backward"></i></a>
-              <a class="btn" href="./stop"><i class="icon-stop"></i></a>
-              <a class="btn" href="./pley"><i class="icon-play-circle"></i></a>
-              <a class="btn" href="./pause"><i class="icon-pause"></i></a>
-              <a class="btn" href="./next"><i class="icon-step-forward"></i></a>
+              <button class="btn" onclick="prev()"><i class="icon-step-backward"></i></button>
+              <button class="btn" onclick="stop()"><i class="icon-stop"></i></button>
+              <button class="btn" onclick="play()"><i class="icon-play-circle"></i></button>
+              <button class="btn" onclick="pause()"><i class="icon-pause"></i></button>
+              <button class="btn" onclick="next()"><i class="icon-step-forward"></i></button>
+              <input type="text" style=" margin-left:5px; margin-top:10px" placeholder="Search" 
+              onkeypress="{if (event.keyCode==13) doSearch()}" id="searchBox"> 
             </div>
-          </div>
         </div>
-        <table class="table table-hover">
-          <thead>
-            <tr>
-              <th>#</th>
-              <th>Title</th>
-              <th>Artist</th>
-              <th>Album</th>
-            </tr>
-          </thead>
-          <tbody>
-            <tr>
-              <td>1</td>
-              <td>Computer Love</td>
-              <td>Kraftwerk</td>
-              <td>Computer World</td>
-            </tr>
-            <tr>
-              <td>2</td>
-              <td>Pocket Calculator</td>
-              <td>Kraftwerk</td>
-              <td>Computer World</td>
-            </tr>
-          </tbody>
-          
-        </table>  
+		</div>
+		<div class="row-fluid">
+			<div id="contentList">
+				<table class="table table-hover">
+				  <thead>
+				    <tr>
+				      <th>#</th>
+				      <th>Title</th>
+				      <th>Artist</th>
+				      <th>Album</th>
+				    </tr>
+				  </thead>
+				  <tbody>
+				    <tr>
+				      <td>1</td>
+				      <td>Computer Love</td>
+				      <td>Kraftwerk</td>
+				      <td>Computer World</td>
+				    </tr>
+				    <tr>
+				      <td>2</td>
+				      <td>Pocket Calculator</td>
+				      <td>Kraftwerk</td>
+				      <td>Computer World</td>
+				    </tr>
+				  </tbody>
+				</table>  
+			</div>
+		</div>
     </div>
 
-      <div id="push"></div>
+    </div>
     </div>
 
-    <div id="footer">
-      <div class="container">
-        <p class="muted credit">Andrée Ekroth (githublink) and Meris Bahtijaragic (githublink)</p>
-      </div>
-    </div>
+</body>
+
+
+
