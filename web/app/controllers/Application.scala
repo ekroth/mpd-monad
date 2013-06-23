@@ -1,5 +1,6 @@
 package controllers
 
+import scala.concurrent.ExecutionContext.Implicits.global
 import play.api._
 import play.api.mvc._
 import mpd._
@@ -11,7 +12,7 @@ object Application extends Controller {
   import scalaz._
   import Scalaz._
 
-  val srv = new ServerMessagesStd with MpdComponentSync with ServerMessagesDebug with PlaybackMessagesStd
+  val srv = new ServerMessagesStd with MpdComponentSync with ServerMessagesDebug with PlaybackMessagesStd with PlaylistMessagesStd
   
   val connection = srv.mpd.connect("192.168.1.2",6600)
 
@@ -45,5 +46,26 @@ object Application extends Controller {
   def pause = Action {
     issueCmd(srv.pause())
   }
+
+  def currentSong = Action {
+    Async {
+      srv.currentsong.map { 
+        _ match {
+          case \/-(s) => Ok(s.map(_.toString).getOrElse("No song playing."))
+          case -\/(e) => Ok(s"Invalid song: $e")
+        } 
+      }
+    }
+  }
+
+  /**
+   * Debug!
+   */
+  def reconnect = Action {
+    srv.mpd.disconnect
+    srv.mpd.connect("192.168.1.2",6600)
+    Ok("Andrée is the webprogrammer")
+  }
+
 
 }

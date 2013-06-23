@@ -11,7 +11,8 @@ GET     /pley                       controllers.Application.pley
 GET     /stop                       controllers.Application.stop
 GET     /prev                       controllers.Application.prev
 GET     /pause                      controllers.Application.pause
-
+GET     /currentSong                controllers.Application.currentSong
+GET     /reconnect                  controllers.Application.reconnect
 # Playlist commands
 
 # Search
