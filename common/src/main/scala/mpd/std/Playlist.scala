@@ -19,17 +19,16 @@ trait PlaylistMessagesStd extends PlaylistMessages {
             str: scala.util.matching.Regex.Match => (str.group(1).toLowerCase -> str.group(2))
           }).toMap
 
-          println(s)
-
-          CurrentSong(
-            s("file"),
-            s("time").toInt,
-            s("album"),
-            s("artist"),
-            s("title"),
-            s("track").toInt,
-            s("pos").toInt,
-            s("id").toInt)
+          if (s.isEmpty) None else
+            Some(CurrentSong(
+              s("file"),
+              s("time").toInt,
+              s("album"),
+              s("artist"),
+              s("title"),
+              s("track").toInt,
+              s("pos").toInt,
+              s("id").toInt))
         }
       } catch {
         case e: Throwable => Unknown("invalid response, currentsong").left

@@ -6,7 +6,7 @@ case class CurrentSong(file: String, time: Int, album: String, artist: String, t
 
 trait PlaylistMessages extends ServerMessages {
   /** Displays the metadata of the current song. */
-  def currentsong(): Future[DefaultT[CurrentSong]]
+  def currentsong(): Future[DefaultT[Option[CurrentSong]]]
 
   abstract override def required = super.required ++ Set(
     "add",
