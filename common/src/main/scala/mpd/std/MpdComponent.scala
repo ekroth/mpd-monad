@@ -7,7 +7,9 @@ import mpd.{ MPDConnection => MPDC }
 import mpd.messages._
 
 trait MpdComponentSync extends MpdComponent {
-  override val mpd = new BasicMpdImpl()
+  override val mpd = synchronized {
+    new BasicMpdImpl()
+  }
 
   final class BasicMpdImpl extends BasicMpd {
     private[this] var mpd = none[MPDC]

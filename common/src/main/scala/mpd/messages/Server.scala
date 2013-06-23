@@ -1,9 +1,14 @@
 package mpd.messages
 
-import scala.concurrent.Future
+import scala.concurrent._
+import ExecutionContext.Implicits.global
 
 trait ServerMessages {
-  def raw(s: String): Future[Any]
-  def read(): Future[DefaultT[Vector[String]]] = ???
+  def raw(s: String): Future[PossibleError]
+  def read(): Future[DefaultT[Vector[String]]]
+  def wread(s: String) = for {
+    _ <- raw(s)
+    x <- read
+  } yield x
   def required: Set[String]
 }

@@ -2,8 +2,8 @@ package mpd
 
 import scala.annotation.tailrec
 
-import java.net.{ Socket => JSocket }
-import java.io.{ InputStreamReader, OutputStreamWriter, BufferedReader }
+import java.net.{ Socket => JSocket, InetSocketAddress }
+import java.io._
 
 import scalaz._
 
@@ -11,30 +11,35 @@ import mpd.messages._
 
 final object MPDInternal extends MPDInternalTypes
 sealed trait MPDInternalTypes {
-  val OK = "OK"
-  val ACK = "ACK"
+  val OKStr = "OK"
+  val ACKStr = "ACK"
   val BuffSize = 1024
-  val OKConnect = """OK MPD (.*)""".r
-  val ACKConnect = """ACK [(.*)@(.*)] \{(.*)\}(.*)""".r
+  val OKConnectr = s"""$OKStr MPD (.*)""".r
+  val OKr = OKStr.r
+  val ACKr = """$ACKStr [(.*)@(.*)] \{(.*)\}(.*)""".r
+  val Encoding = "UTF-8"
+  val Timeout = 10000
 }
 
 import Scalaz._
+import MPDInternal._
 
 final object MPDConnection {
   def connect(addr: String, port: Int): DefaultT[MPDConnection] = {
-    import MPDInternal._
+    
     try {
-      val socket = new JSocket(addr, port)
+      val socket = new JSocket()
+      socket.connect(new InetSocketAddress(addr, port), Timeout)
       val in = new BufferedReader(new InputStreamReader(socket.getInputStream), BuffSize)
       val line = in.readLine
       line match {
-        case OKConnect(ver) => {
-          val out = new OutputStreamWriter(socket.getOutputStream, "UTF-8")
-          val in = new InputStreamReader(socket.getInputStream, "UTF-8")
-
-          MPDConnection(socket, in, out).right
+        case OKConnectr(ver) => {
+          val input = new BufferedReader(
+            new InputStreamReader(socket.getInputStream, Encoding), BuffSize)
+          val output = socket.getOutputStream()
+          MPDConnection(socket, input, output).right
         }
-        case x @ ACKConnect(err, cmdNum, cmd, msg) => Unknown(x.toString).left
+        case ACKr(err, _, _, msg) => ACK(err, msg).left
         case x => Unknown(s"msg: $x").left
       }
     } catch {
@@ -43,49 +48,77 @@ final object MPDConnection {
   }
 }
 
-final case class MPDConnection(socket: JSocket, input: InputStreamReader, output: OutputStreamWriter) {
+final case class MPDConnection(socket: JSocket, in: BufferedReader, out: OutputStream) {
   val CmdBegin = "command_list_begin"
   val CmdEnd = "command_list_end"
 
+  /** Connection status.
+   *
+   * @return Unit if connected */
   def connected: PossibleError =
-    if (socket.isConnected && !socket.isClosed()) ().right
+    if (socket.isConnected && !socket.isClosed() && in.ready) ().right
     else Disconnected().left
 
-  def writeb(f: => PossibleError): DefaultT[PossibleError] = for {
-    _ <- write(CmdBegin)
-    v = f
-    _ <- write(CmdEnd)
-    _ = output.flush
-  } yield v
+  /** Encapsulate f in command list */
+  def writeb(f: => PossibleError): PossibleError =
+    for {
+      _ <- write(CmdBegin)
+      _ <- f
+      _ <- write(CmdEnd)
+      _ <- flush
+    } yield ()
 
+  /** Write directly to socket, without command list */
   def write(cmd: String): PossibleError = try {
-    output.write(s"""$cmd\n""").right
+    out.write(s"""$cmd\n""".getBytes(MPDInternal.Encoding)).right
   } catch {
     case e: Throwable => Unknown(e.toString).left
   }
 
-  def writef(cmd: String) = writeb {
-    write(cmd)
+  /** Write and flush */
+  def writef(cmd: String*) = writeb {
+    write(cmd.mkString("\n"))
   }
 
-  def flush = output.flush
+  /** Write and read response */
+  def wread(cmd: String): PossibleError =
+    for {
+      _ <- writef(cmd)
+      _ <- read()
+    } yield ()
 
+  /** Flush output */
+  def flush: PossibleError = {
+    try {
+      out.flush
+      ().right
+    } catch {
+      case e: Throwable => Unknown(e.toString).left
+    }
+  }
+
+  /** Read input, this is a blocking call */
   def read(): DefaultT[Vector[String]] = {
-    @tailrec def readEnd(br: BufferedReader, out: Vector[String]): DefaultT[Vector[String]] =
-      br.readLine match {
+    @tailrec def readEnd(out: Vector[String]): DefaultT[Vector[String]] =
+      in.readLine match {
         case null => Unknown("empty read").left
-        case x if (x contains "ACK") => ACK().left
-        case x if (x contains "OK") => out.right
-        case x => readEnd(br, out :+ x)
+        case ACKr(err, _, _, msg) => ACK(err, msg).left
+        case OKr() => out.right
+        case x => readEnd(out :+ x)
       }
 
-    readEnd(new BufferedReader(input, MPDInternal.BuffSize), Vector.empty)
+    try {
+      readEnd(Vector.empty)
+    } catch {
+      case e: Throwable => Unknown(e.toString).left
+    }
   }
 
+  /** Disconnect */
   def disconnect(): PossibleError = {
     if (connected.isRight) {
       try {
-        socket.close.right
+        in.close.right
       } catch {
         case e: Throwable => Unknown(e.toString).left
       }

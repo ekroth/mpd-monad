@@ -9,7 +9,7 @@ trait ResultTypes {
   case class OK()
 
   sealed trait Error
-  case class ACK() extends Error
+  case class ACK(err: String, msg: String) extends Error
   case class Disconnected() extends Error
   case class Unknown(s: String) extends Error
 
