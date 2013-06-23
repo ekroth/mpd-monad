@@ -5,6 +5,7 @@ import ExecutionContext.Implicits.global
 
 import mpd.{ MPDConnection => MPDC }
 import mpd.messages._
+import mpd.util._
 
 trait PlaylistMessagesStd extends PlaylistMessages {
   import scalaz._
@@ -14,10 +15,7 @@ trait PlaylistMessagesStd extends PlaylistMessages {
     x =>
       try {
         for (v <- x) yield {
-          val r = """(\w*): (.*)""".r
-          val s = (r.findAllMatchIn(v.mkString("\n")) map {
-            str: scala.util.matching.Regex.Match => (str.group(1).toLowerCase -> str.group(2))
-          }).toMap
+          val s = MpdParse.mapValues(v)
 
           if (s.isEmpty) None else
             Some(CurrentSong(
@@ -31,7 +29,7 @@ trait PlaylistMessagesStd extends PlaylistMessages {
               s("id").toInt))
         }
       } catch {
-        case e: Throwable => Unknown("invalid response, currentsong").left
+        case e: Throwable => Unknown(s"(status()), error parsing $e").left
       }
   }
 
