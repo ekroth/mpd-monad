@@ -1,0 +1,27 @@
+@(playList: List[mpd.messages.Song])
+<div class="row-fluid">
+  <div id="contentList">
+    <table class="table table-hover">
+      <thead>
+        <tr>
+          <th>Title</th>
+          <th>Artist</th>
+          <th>Album</th>
+          <th>Time</th>
+        </tr>
+      </thead>
+      <tbody>
+      @for(x <- playList){
+         val Song(_, _, time, title, artist, album, _, _, _, _, _, _, _, _) = x
+         
+         <tr>
+            <td>title</td>
+			<td>artist</td>
+            <td>album</td>
+            <td>time</td>
+         </tr>
+      }
+      </tbody>
+    </table>  
+  </div>
+</div>
