@@ -97,6 +97,14 @@ final case class MPDConnection(socket: JSocket, in: BufferedReader, out: OutputS
     }
   }
 
+  /** Clear input */
+  def clear: PossibleError = try {
+    in.skip(socket.getInputStream.available)
+    ().right
+  } catch {
+    case e: Throwable => Unknown(e.toString).left
+  }
+
   /** Read input, this is a blocking call */
   def read(): DefaultT[Vector[String]] = {
     @tailrec def readEnd(out: Vector[String]): DefaultT[Vector[String]] =

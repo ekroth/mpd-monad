@@ -27,5 +27,9 @@ trait ServerMsgStd extends ServerMsg {
     mpd.con.read
   }
 
+  override def clear() = future {
+    mpd.con.clear
+  }
+
   override def required = Set.empty[String]
 }
