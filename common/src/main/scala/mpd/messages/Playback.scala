@@ -30,9 +30,10 @@ trait PlaybackMsg extends ServerMsg {
   /** Plays previous song in playlist. */
   def previous(): Future[DefaultOK]
 
-  // seek
-  // seekid
-  // setvol
+  /* seek
+   * seekid
+   * setvol
+   */
   
   /** To halt playing. */
   def stop(): Future[DefaultOK]

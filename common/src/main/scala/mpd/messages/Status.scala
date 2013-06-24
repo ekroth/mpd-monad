@@ -20,10 +20,16 @@ case class Status(volume: Int, repeat: Int, random: Int, single: Int, consume: I
 case class Song(file: String, lastModified: String, time: Int, title: String, artist: String, album: String, albumArtist: String, genre: String, date: String, composer: String, disc: String, track: String, pos: Int, id: Int)
 
 trait StatusMsg extends ServerMsg {
+  // clearerror
+
   /** Displays the metadata of the current song. */
   def currentsong(): Future[DefaultT[Option[Song]]]
 
+  // idle [SUBSYSTEMS...]
+
   def status(): Future[DefaultT[Status]]
+
+  // stats
 
   abstract override def required = super.required ++ Set()
 }
