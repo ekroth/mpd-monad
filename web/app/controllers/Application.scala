@@ -17,7 +17,7 @@ object Application extends Controller {
   val connection = srv.mpd.connect("192.168.1.2",6600)
 
   def index(cmd: String = "index") = Action {
-    Ok(views.html.index(cmd))
+    Ok(views.html.index(Nil))
   }
 
 
