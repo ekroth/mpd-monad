@@ -55,7 +55,7 @@ object Application extends Controller {
     Async {
       srv.currentsong.map { 
         _ match {
-          case \/-(s) => Ok(s.map(_.toString).getOrElse("No song playing."))
+          case \/-(s) => Ok(s.map(x => s"${x.title} - ${x.artist}  (${x.time})" ).getOrElse("No song playing."))
           case -\/(e) => Ok(s"Invalid song: $e")
         } 
       }

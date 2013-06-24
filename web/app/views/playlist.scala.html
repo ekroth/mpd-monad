@@ -10,15 +10,13 @@
           <th>Time</th>
         </tr>
       </thead>
-      <tbody>
-      @for(x <- playList){ 
-         <tr>
-            <td>@x.title</td>
-			      <td>@x.artist</td>
-            <td>@x.album</td>
-            <td>@x.time</td>
-         </tr>
-      }
+      <tbody>@for(x <- playList){
+        <tr>
+          <td>@x.title</td>
+          <td>@x.artist</td>
+          <td>@x.album</td>
+          <td>@x.time</td>
+        </tr>}
       </tbody>
     </table>  
   </div>
