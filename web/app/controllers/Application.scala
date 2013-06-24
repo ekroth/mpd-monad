@@ -12,7 +12,7 @@ object Application extends Controller {
   import scalaz._
   import Scalaz._
 
-  val srv = new ServerMessagesStd with MpdComponentSync with ServerMessagesDebug with PlaybackMessagesStd with PlaylistMessagesStd
+  val srv = new ServerMsgStd with MpdComponentSync with ServerMsgDebug with PlaybackMsgStd with StatusMsgStd 
   
   val connection = srv.mpd.connect("192.168.1.2",6600)
 
