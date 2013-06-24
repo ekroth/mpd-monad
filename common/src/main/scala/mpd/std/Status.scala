@@ -19,7 +19,7 @@ trait StatusMsgStd extends StatusMsg {
           val s = MpdParse.mapValues(v)
 
           if (s.isEmpty) None else
-            Some(CurrentSong(
+            Some(Song(
               s("file"),
               s("last-modified"),
               s("time").toInt,
