@@ -12,15 +12,19 @@ object Application extends Controller {
   import scalaz._
   import Scalaz._
 
-  val srv = new ServerMsgStd with MpdComponentSync with ServerMsgDebug with PlaybackMsgStd with StatusMsgStd 
+  val srv = new ServerMsgStd with MpdComponentSync with ServerDebug with PlaybackMsgStd with StatusMsgStd 
   
   val connection = srv.mpd.connect("192.168.1.2",6600)
 
   def index(cmd: String = "index") = Action {
-    Ok(views.html.index(Nil))
+    Ok(views.html.index(getPlayList))
   }
 
-
+  def getPlayList = {
+     Song("dsa","dsa",0,"dsa","dsa","dsa","dsa","dsa","dsa","dsa","dsa","dsa",0,0) :: 
+     Song("dsa","dsa",0,"dsa","dsa","dsa","dsa","dsa","dsa","dsa","dsa","dsa",0,0) :: 
+     Nil
+  }
   
   def issueCmd[T](cmd: => T) = { 
     cmd

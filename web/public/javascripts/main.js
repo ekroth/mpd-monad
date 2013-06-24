@@ -6,8 +6,8 @@ function updateResults() {
 function updateCurrSong(httpResponse) {
   document.getElementById("currSong").innerHTML = httpResponse.responseText
 }
-
-setInterval(function() {updatePageFetch("currentSong",updateCurrSong)}, 1000)
+updatePageFetch("currentSong",updateCurrSong)
+setInterval(function() {updatePageFetch("currentSong",updateCurrSong)}, 2000)
 
 function logResponse(v) {
   console.log(v.responseText)

@@ -11,14 +11,12 @@
         </tr>
       </thead>
       <tbody>
-      @for(x <- playList){
-         val Song(_, _, time, title, artist, album, _, _, _, _, _, _, _, _) = x
-         
+      @for(x <- playList){ 
          <tr>
-            <td>title</td>
-			<td>artist</td>
-            <td>album</td>
-            <td>time</td>
+            <td>@x.title</td>
+			      <td>@x.artist</td>
+            <td>@x.album</td>
+            <td>@x.time</td>
          </tr>
       }
       </tbody>
