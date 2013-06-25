@@ -12,7 +12,9 @@ trait PlaylistMsgStd extends PlaylistMsg {
   import Scalaz._
 
   override def playlistinfo() = {
-    def grouper[T <: Tuple2[_, _]](xs: Seq[T], delim: Option[T], ys: Seq[Traversable[T]] = Seq.empty): Seq[Traversable[T]] = {
+    def grouper[T <: Tuple2[_, _]](xs: Seq[T], 
+				   delim: Option[T], 
+				   ys: Seq[Traversable[T]] = Seq.empty): Seq[Traversable[T]] = {
       if (xs.isEmpty || delim.isEmpty) ys
       else {
         val take = (xs.tail takeWhile { _._1 != delim.get._1 }) :+ xs.head
