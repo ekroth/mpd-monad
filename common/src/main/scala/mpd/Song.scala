@@ -1,9 +1,5 @@
 package mpd
 
-object Song {
-  val params = 14
-}
-
 case class Song(
   file: Option[String], lastModified: Option[String], 
   time: Option[Int], title: Option[String], 
