@@ -14,8 +14,12 @@ trait PlaylistMsg extends ServerMsg {
    * playlist -- deprecated
    * playlistfind
    * playlistid
-   * playlistinfo
-   * playlistsearch
+   */
+
+  /** Seq of songs of current playlist */
+  def playlistinfo(): Future[DefaultT[Seq[Song]]]
+
+  /* playlistsearch
    * plchanges
    * plchangesposid
    * prio

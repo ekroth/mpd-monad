@@ -15,9 +15,30 @@ object State extends Enumeration {
 
 import State._
 
-case class Status(volume: Int, repeat: Int, random: Int, single: Int, consume: Int, playlist: Int, playlistlength: Int, xfade: Int, mixrampdb: String, mixrampdelay: String, state: State, song: Int, songid: Int, time: String, elapsed: String, bitrate: Int, audio: String, nextsong: Int, nextsongid: Int)
+case class Status(
+  volume: Int, repeat: Int, 
+  random: Int, single: Int, 
+  consume: Int, playlist: Int, 
+  playlistlength: Int, 
+  xfade: Int, mixrampdb: String, 
+  mixrampdelay: String, state: State, 
+  song: Int, songid: Int, 
+  time: String, elapsed: String, 
+  bitrate: Int, audio: String,
+  nextsong: Int, nextsongid: Int)
 
-case class Song(file: String, lastModified: String, time: Int, title: String, artist: String, album: String, albumArtist: String, genre: String, date: String, composer: String, disc: String, track: String, pos: Int, id: Int)
+object Song {
+  val params = 14
+}
+
+case class Song(
+  file: Option[String], lastModified: Option[String], 
+  time: Option[Int], title: Option[String], 
+  artist: Option[String], album: Option[String], 
+  albumArtist: Option[String], genre: Option[String], 
+  date: Option[String], composer: Option[Seq[String]], 
+  disc: Option[String], track: Option[String],
+  pos: Option[Int], id: Option[Int])
 
 trait StatusMsg extends ServerMsg {
   // clearerror

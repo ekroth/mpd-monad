@@ -12,32 +12,9 @@ trait StatusMsgStd extends StatusMsg {
   import scalaz._
   import Scalaz._
 
-  override def currentsong() = wread("currentsong") map {
-    x =>
-      try {
-        for (v <- x) yield {
-          val s = MpdParse.mapValues(v)
-
-          if (s.isEmpty) None else
-            Some(Song(
-              s("file"),
-              s("last-modified"),
-              s("time").toInt,
-              s("title"),
-              s("artist"),
-              s("album"),
-              s("albumartist"),
-              s("genre"),
-              s("date"),
-              s("composer"),
-              s("disc"),
-              s("track"),
-              s("pos").toInt,
-              s("id").toInt))
-        }
-      } catch {
-        case e: Throwable => Unknown(s"(status()), error parsing $e").left
-      }
+  override def currentsong() = wread("currentsong") map { x => 
+    for { v <- x
+	  s <- MpdParse.parseSong(MpdParse.mapValues(v)) } yield s
   }
 
   override def status() = wread("status") map {
@@ -47,25 +24,25 @@ trait StatusMsgStd extends StatusMsg {
           val s = MpdParse.mapValues(v)
 
           Status(
-            s("volume").toInt,
-            s("repeat").toInt,
-            s("random").toInt,
-            s("single").toInt,
-            s("consume").toInt,
-            s("playlist").toInt,
-            s("playlistlength").toInt,
-            s("xfade").toInt,
-            s("mixrampdb"),
-            s("mixrampdelay"),
-            MState(s("state")),
-            s("song").toInt,
-            s("songid").toInt,
-            s("time"),
-            s("elapsed"),
-            s("bitrate").toInt,
-            s("audio"),
-            s("nextsong").toInt,
-            s("nextsongid").toInt)
+            s("volume").head.toInt,
+            s("repeat").head.toInt,
+            s("random").head.toInt,
+            s("single").head.toInt,
+            s("consume").head.toInt,
+            s("playlist").head.toInt,
+            s("playlistlength").head.toInt,
+            s("xfade").head.toInt,
+            s("mixrampdb").head,
+            s("mixrampdelay").head,
+            MState(s("state").head),
+            s("song").head.toInt,
+            s("songid").head.toInt,
+            s("time").head,
+            s("elapsed").head,
+            s("bitrate").head.toInt,
+            s("audio").head,
+            s("nextsong").head.toInt,
+            s("nextsongid").head.toInt)
         }
       } catch {
         case e: Throwable => Unknown(s"(status()), error parsing: $e").left
