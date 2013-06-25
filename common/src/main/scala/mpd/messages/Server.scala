@@ -1,12 +1,12 @@
 package mpd
 package messages
 
-import scala.concurrent.ExecutionContext.Implicits.global
 import scala.concurrent.Future
 
 import Result._
 
 trait ServerMsg {
+  this: ExecutorComponent =>
   def raw(s: String): Future[PossibleError]
   def read(): Future[DefaultT[Vector[String]]]
   def clear(): Future[PossibleError]

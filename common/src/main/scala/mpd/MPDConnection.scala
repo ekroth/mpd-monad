@@ -25,8 +25,7 @@ import Scalaz._
 import MPDInternal._
 
 final object MPDConnection {
-  def connect(addr: String, port: Int): DefaultT[MPDConnection] = {
-    
+  def connect(addr: String, port: Int): DefaultT[MPDConnection] = {    
     try {
       val socket = new JSocket()
       socket.connect(new InetSocketAddress(addr, port), Timeout)

@@ -6,6 +6,7 @@ import scala.concurrent.Future
 import Result._
 
 trait PlaybackMsg extends ServerMsg {
+  this: ExecutorComponent =>
   /** Plays next song in playlist. */
   def next(): Future[DefaultOK]
 

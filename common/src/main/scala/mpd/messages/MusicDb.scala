@@ -4,7 +4,7 @@ package messages
 import scala.concurrent.Future
 
 trait MusicDbMsg extends ServerMsg {
-
+  this: ExecutorComponent =>
   /* count
    * find
    * findadd

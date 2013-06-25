@@ -31,6 +31,7 @@ case class Status(
   nextsong: Int, nextsongid: Int)
 
 trait StatusMsg extends ServerMsg {
+  this: ExecutorComponent =>
   // clearerror
 
   /** Displays the metadata of the current song. */

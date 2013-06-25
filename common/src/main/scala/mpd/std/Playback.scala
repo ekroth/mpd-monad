@@ -5,10 +5,11 @@ import scala.concurrent._
 import ExecutionContext.Implicits.global
 
 import mpd.{ MPDConnection => MPDC, Song }
-import messages.PlaybackMsg
+import messages.{ PlaybackMsg, ExecutorComponent }
 import messages.Result._
 
 trait PlaybackMsgStd extends PlaybackMsg {
+  this: ExecutorComponent =>
   import scalaz._
   import Scalaz._
 

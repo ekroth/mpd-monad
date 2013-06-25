@@ -4,7 +4,7 @@ package messages
 import scala.concurrent.Future
 
 trait PlaybackOptsMsg extends ServerMsg {
-
+  this: ExecutorComponent =>
   /* consume
    * crossfade
    * mixrampdb

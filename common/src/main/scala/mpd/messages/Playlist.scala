@@ -6,7 +6,7 @@ import scala.concurrent.Future
 import Result._
 
 trait PlaylistMsg extends ServerMsg {
-
+  this: ExecutorComponent =>
   /* add
    * addid
    * clear

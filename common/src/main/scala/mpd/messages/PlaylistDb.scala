@@ -4,7 +4,7 @@ package messages
 import scala.concurrent.Future
 
 trait PlaylistDbMsg extends ServerMsg {
-
+  this: ExecutorComponent =>
   /* listplaylist
    * listplaylistinfo
    * listplaylists

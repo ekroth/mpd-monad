@@ -5,10 +5,11 @@ import scala.concurrent.ExecutionContext.Implicits.global
 import scala.annotation.tailrec
 
 import mpd.{ MPDConnection => MPDC }
-import messages.PlaylistMsg
+import messages.{ PlaylistMsg, ExecutorComponent }
 import util.MpdParse
 
 trait PlaylistMsgStd extends PlaylistMsg {
+  this: ExecutorComponent =>
   import scalaz._
   import Scalaz._
 

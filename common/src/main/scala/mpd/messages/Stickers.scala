@@ -4,7 +4,7 @@ package messages
 import scala.concurrent.Future
 
 trait StickersMsg extends ServerMsg {
-
+  this: ExecutorComponent =>
   /* sticker <>
    * get
    * set
