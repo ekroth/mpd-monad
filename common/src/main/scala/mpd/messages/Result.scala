@@ -1,8 +1,9 @@
-package mpd.messages
+package mpd
+package messages
 
 import scala.concurrent.Future
 
-trait ResultTypes {
+final object Result {
   import scalaz._
   import Scalaz._
 

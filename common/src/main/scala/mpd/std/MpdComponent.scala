@@ -1,10 +1,11 @@
-package mpd.std
+package mpd
+package std
 
 import scalaz._
 import Scalaz._
 
 import mpd.{ MPDConnection => MPDC }
-import mpd.messages._
+import messages.Result._
 
 trait MpdComponentSync extends MpdComponent {
   override val mpd = synchronized {

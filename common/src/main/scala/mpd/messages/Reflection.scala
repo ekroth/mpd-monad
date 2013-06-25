@@ -1,4 +1,5 @@
-package mpd.messages
+package mpd
+package messages
 
 import scala.concurrent.Future
 

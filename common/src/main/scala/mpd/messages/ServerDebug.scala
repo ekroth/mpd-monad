@@ -1,4 +1,5 @@
-package mpd.messages
+package mpd
+package messages
 
 import scala.concurrent._
 
@@ -6,11 +7,11 @@ import ExecutionContext.Implicits.global
 
 trait ServerDebug extends ServerMsg {
   def limit(s: String) = {
-    val max = 64
+    val max = 128
     val l = s.length
 
     if (l <= max) s
-    else s.substring(0, max / 2) + "..." + s.substring(l - max / 2)
+    else s"${s.substring(0, max / 2)}...${s.substring(l - max / 2)}"
   }
 
   abstract override def raw(s: String) = {
@@ -21,9 +22,9 @@ trait ServerDebug extends ServerMsg {
   abstract override def read() = {
     println("read()")
     val s = System.currentTimeMillis
-    for {
-      v <- super.read()
-      _ = println(s"value = ${limit(v.toString)}\ntime: ${System.currentTimeMillis - s}")
-    } yield v
+    for (v <- super.read()) yield {
+      println(s"value = ${limit(v.toString)}\ntime: ${System.currentTimeMillis - s}")
+      v
+    }
   }
 }

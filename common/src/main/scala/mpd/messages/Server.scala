@@ -1,7 +1,10 @@
-package mpd.messages
+package mpd
+package messages
 
-import scala.concurrent._
-import ExecutionContext.Implicits.global
+import scala.concurrent.ExecutionContext.Implicits.global
+import scala.concurrent.Future
+
+import Result._
 
 trait ServerMsg {
   def raw(s: String): Future[PossibleError]

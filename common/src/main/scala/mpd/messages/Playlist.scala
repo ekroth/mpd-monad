@@ -1,6 +1,9 @@
-package mpd.messages
+package mpd
+package messages
 
 import scala.concurrent.Future
+
+import Result._
 
 trait PlaylistMsg extends ServerMsg {
 

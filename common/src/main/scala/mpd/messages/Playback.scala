@@ -1,6 +1,9 @@
-package mpd.messages
+package mpd
+package messages
 
 import scala.concurrent.Future
+
+import Result._
 
 trait PlaybackMsg extends ServerMsg {
   /** Plays next song in playlist. */

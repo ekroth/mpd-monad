@@ -3,11 +3,11 @@ package mpd
 import scala.annotation.tailrec
 
 import java.net.{ Socket => JSocket, InetSocketAddress }
-import java.io._
+import java.io.{ BufferedReader, InputStreamReader, OutputStream }
 
 import scalaz._
 
-import mpd.messages._
+import messages.Result._
 
 final object MPDInternal extends MPDInternalTypes
 sealed trait MPDInternalTypes {
