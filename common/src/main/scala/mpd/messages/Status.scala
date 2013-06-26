@@ -44,7 +44,6 @@ trait StatusMsg extends ServerMsg {
   // idle [SUBSYSTEMS...]
   /** Returns a Seq of which subsystems that were updated */
   def idle(xs: SubSystem*): Future[DefaultT[Seq[SubSystem]]]
-  final def idle(): Future[DefaultT[Seq[SubSystem]]] = idle()
 
   def status(): Future[DefaultT[Status]]
 
