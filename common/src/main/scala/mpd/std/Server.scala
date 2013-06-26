@@ -4,7 +4,7 @@ package std
 import scala.concurrent._
 import ExecutionContext.Implicits.global
 
-import mpd.{ MPDConnection => MPDC }
+import mpd.MPDC
 import messages.{ ServerMsg, ExecutorComponent }
 import messages.Result.PossibleError
 

@@ -24,8 +24,8 @@ sealed trait MPDInternalTypes {
 import Scalaz._
 import MPDInternal._
 
-final object MPDConnection {
-  def connect(addr: String, port: Int): DefaultT[MPDConnection] = {    
+trait MPDCFactory {
+  def connect(addr: String, port: Int): DefaultT[MPDC] = {    
     try {
       val socket = new JSocket()
       socket.connect(new InetSocketAddress(addr, port), Timeout)
@@ -36,7 +36,7 @@ final object MPDConnection {
           val input = new BufferedReader(
             new InputStreamReader(socket.getInputStream, Encoding), BuffSize)
           val output = socket.getOutputStream()
-          MPDConnection(socket, input, output).right
+          create(socket, input, output).right
         }
         case ACKr(err, _, _, msg) => ACK(err, msg).left
         case x => Unknown(s"msg: $x").left
@@ -45,18 +45,21 @@ final object MPDConnection {
       case e: Throwable => Unknown(e.toString).left
     }
   }
+
+  def create(socket: JSocket, in: BufferedReader, out: OutputStream): MPDC
 }
 
-final case class MPDConnection(socket: JSocket, in: BufferedReader, out: OutputStream) {
-  val CmdBegin = "command_list_begin"
-  val CmdEnd = "command_list_end"
+final object MPDC extends MPDCFactory {
+  override def create(socket: JSocket, in: BufferedReader, out: OutputStream) = 
+    MPDCImpl(socket, in, out)
+}
 
-  /** Connection status.
-   *
-   * @return Unit if connected */
-  def connected: PossibleError =
-    if (socket.isConnected && !socket.isClosed() && in.ready) ().right
-    else Disconnected().left
+trait MPDC {
+  final val CmdBegin = "command_list_begin"
+  final val CmdEnd = "command_list_end"
+
+  /** Connection status. */
+  def connected: PossibleError
 
   /** Encapsulate f in command list */
   def writeb(f: => PossibleError): PossibleError =
@@ -68,11 +71,7 @@ final case class MPDConnection(socket: JSocket, in: BufferedReader, out: OutputS
     } yield ()
 
   /** Write directly to socket, without command list */
-  def write(cmd: String): PossibleError = try {
-    out.write(s"""$cmd\n""".getBytes(MPDInternal.Encoding)).right
-  } catch {
-    case e: Throwable => Unknown(e.toString).left
-  }
+  def write(cmd: String): PossibleError
 
   /** Write and flush */
   def writef(cmd: String*) = writeb {
@@ -87,7 +86,35 @@ final case class MPDConnection(socket: JSocket, in: BufferedReader, out: OutputS
     } yield ()
 
   /** Flush output */
-  def flush: PossibleError = {
+  def flush(): PossibleError
+
+  /** Clear input */
+  def clear(): PossibleError
+
+  /** Read input, this is a blocking call */
+  def read(): DefaultT[Vector[String]]
+
+  /** Disconnect */
+  def disconnect(): PossibleError
+}
+
+case class MPDCImpl(socket: JSocket, in: BufferedReader, out: OutputStream) extends MPDC {
+  /** Connection status.
+   *
+   * @return Unit if connected */
+  override def connected: PossibleError =
+    if (socket.isConnected && !socket.isClosed() && in.ready) ().right
+    else Disconnected().left
+
+  /** Write directly to socket, without command list */
+  override def write(cmd: String): PossibleError = try {
+    out.write(s"""$cmd\n""".getBytes(MPDInternal.Encoding)).right
+  } catch {
+    case e: Throwable => Unknown(e.toString).left
+  }
+
+  /** Flush output */
+  override def flush(): PossibleError = {
     try {
       out.flush
       ().right
@@ -97,7 +124,7 @@ final case class MPDConnection(socket: JSocket, in: BufferedReader, out: OutputS
   }
 
   /** Clear input */
-  def clear: PossibleError = try {
+  override def clear(): PossibleError = try {
     in.skip(socket.getInputStream.available)
     ().right
   } catch {
@@ -105,7 +132,7 @@ final case class MPDConnection(socket: JSocket, in: BufferedReader, out: OutputS
   }
 
   /** Read input, this is a blocking call */
-  def read(): DefaultT[Vector[String]] = {
+  override def read(): DefaultT[Vector[String]] = {
     @tailrec def readEnd(out: Vector[String]): DefaultT[Vector[String]] =
       in.readLine match {
         case null => Unknown("empty read").left
@@ -122,7 +149,7 @@ final case class MPDConnection(socket: JSocket, in: BufferedReader, out: OutputS
   }
 
   /** Disconnect */
-  def disconnect(): PossibleError = {
+  override def disconnect(): PossibleError = {
     if (connected.isRight) {
       try {
         in.close.right
@@ -132,4 +159,3 @@ final case class MPDConnection(socket: JSocket, in: BufferedReader, out: OutputS
     } else ().right
   }
 }
-

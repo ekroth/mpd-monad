@@ -4,7 +4,6 @@ package std
 import scala.concurrent.ExecutionContext.Implicits.global
 import scala.annotation.tailrec
 
-import mpd.{ MPDConnection => MPDC }
 import messages.{ PlaylistMsg, ExecutorComponent }
 import util.MpdParse
 

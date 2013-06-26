@@ -4,7 +4,6 @@ package std
 import scala.concurrent._
 import ExecutionContext.Implicits.global
 
-import mpd.{ MPDConnection => MPDC }
 import messages.{ StatusMsg, Status, State => MState, ExecutorComponent }
 import mpd.util.MpdParse
 

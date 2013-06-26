@@ -2,7 +2,6 @@ package mpd
 package std
 
 import messages.Result.PossibleError
-import mpd.{ MPDConnection => MPDC }
 
 trait MpdComponent {
   def mpd: BasicMpd

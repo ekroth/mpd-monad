@@ -4,7 +4,6 @@ package std
 import scalaz._
 import Scalaz._
 
-import mpd.{ MPDConnection => MPDC }
 import messages.Result._
 
 trait MpdComponentSync extends MpdComponent {
@@ -17,7 +16,7 @@ trait MpdComponentSync extends MpdComponent {
 
     override def con = mpd.get
     override def connect(addr: String, port: Int) = {
-      MPDC.connect(addr, port) match {
+      MPDCSync.connect(addr, port) match {
 	case \/-(x) => { 
 	  mpd = x.some
 	  ().right
