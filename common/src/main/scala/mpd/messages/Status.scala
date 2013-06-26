@@ -8,7 +8,7 @@ object State extends Enumeration {
   val play, stop, pause = Value
 }
 
-import State._
+import mpd.messages.State._
 
 case class Status(
   volume: Int, repeat: Int, 
@@ -30,7 +30,7 @@ object SubSystem extends Enumeration {
       subscription, message = Value
 }
 
-import SubSystem._
+import mpd.messages.SubSystem._
 
 trait StatusMsg extends ServerMsg {
   this: ExecutorComponent =>

@@ -4,8 +4,8 @@ package std
 import scala.concurrent.ExecutionContext.Implicits.global
 import scala.annotation.tailrec
 
-import messages.{ PlaylistMsg, ExecutorComponent }
-import util.MpdParse
+import mpd.messages.{ PlaylistMsg, ExecutorComponent }
+import mpd.util.MpdParse
 
 trait PlaylistMsgStd extends PlaylistMsg {
   this: ExecutorComponent =>

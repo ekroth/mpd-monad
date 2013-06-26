@@ -3,7 +3,7 @@ package std
 
 import scala.concurrent.ExecutionContext
 
-import messages.ExecutorComponent
+import mpd.messages.ExecutorComponent
 
 trait ExecutorComponentStd extends ExecutorComponent {
   override val executor = ExecutionContext.Implicits.global

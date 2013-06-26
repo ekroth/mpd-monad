@@ -4,7 +4,7 @@ package std
 import scala.concurrent._
 import ExecutionContext.Implicits.global
 
-import messages.{ ServerMsg, ExecutorComponent }
+import mpd.messages.{ ServerMsg, ExecutorComponent }
 
 trait ServerMsgStd extends ServerMsg {
   self: ExecutorComponent with MpdComponent =>

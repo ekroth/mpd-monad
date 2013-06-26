@@ -1,10 +1,6 @@
 package mpd
 package messages
 
-import scala.concurrent._
-
-import ExecutionContext.Implicits.global
-
 trait ServerDebug extends ServerMsg {
   this: ExecutorComponent =>
   def limit(s: String) = {

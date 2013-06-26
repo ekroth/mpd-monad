@@ -4,7 +4,7 @@ package std
 import scala.concurrent._
 import ExecutionContext.Implicits.global
 
-import messages.{ PlaybackMsg, ExecutorComponent }
+import mpd.messages.{ PlaybackMsg, ExecutorComponent }
 
 trait PlaybackMsgStd extends PlaybackMsg {
   this: ExecutorComponent =>

@@ -4,8 +4,8 @@ package std
 import scala.concurrent._
 import ExecutionContext.Implicits.global
 
-import messages.{ StatusMsg, Status, State => MState, ExecutorComponent, SubSystem }
-import messages.SubSystem._
+import mpd.messages.{ StatusMsg, Status, State => MState, ExecutorComponent, SubSystem }
+import mpd.messages.SubSystem._
 import mpd.util.MpdParse
 
 trait StatusMsgStd extends StatusMsg {
