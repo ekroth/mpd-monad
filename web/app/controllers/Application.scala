@@ -2,6 +2,8 @@ package controllers
 
 import scala.concurrent.ExecutionContext.Implicits.global
 import play.api._
+import play.api.libs.Comet
+import play.api.libs.iteratee._
 import play.api.mvc._
 import mpd._
 import mpd.std._
@@ -12,17 +14,29 @@ object Application extends Controller {
   import scalaz._
   import Scalaz._
 
-  val srv = new ServerMsgStd with MpdComponentSync with ServerDebug with PlaybackMsgStd with StatusMsgStd 
-  
+  val srv = new ServerMsgStd 
+    with ExecutorComponentStd 
+    with MpdComponentSync 
+    with ServerDebug 
+    with PlaybackMsgStd 
+    with StatusMsgStd 
+  val event = new ServerMsgStd 
+    with ExecutorComponentStd 
+    with MpdComponentSync 
+    with ServerDebug 
+    with PlaybackMsgStd 
+    with StatusMsgStd 
+
   val connection = srv.mpd.connect("192.168.1.2",6600)
 
   def index(cmd: String = "index") = Action {
-    Ok(views.html.index(getPlayList))
+    Ok(views.html.main(getPlayList))
   }
 
   def getPlayList = {
-     Song("dsa","dsa",0,"dsa","dsa","dsa","dsa","dsa","dsa","dsa","dsa","dsa",0,0) :: 
-     Song("dsa","dsa",0,"dsa","dsa","dsa","dsa","dsa","dsa","dsa","dsa","dsa",0,0) :: 
+      val dsa = "dsa".some
+     Song(dsa,dsa,0.some,dsa,dsa,dsa,dsa,dsa,dsa,Seq("dsa").some,dsa,dsa,0.some,0.some) :: 
+     Song(dsa,dsa,0.some,dsa,dsa,dsa,dsa,dsa,dsa,Seq("dsa").some,dsa,dsa,0.some,0.some) :: 
      Nil
   }
   
@@ -55,13 +69,24 @@ object Application extends Controller {
     Async {
       srv.currentsong.map { 
         _ match {
-          case \/-(s) => Ok(s.map(x => s"${x.title} - ${x.artist}  (${x.time})" ).getOrElse("No song playing."))
+          //TODO: getOrElse for x attributes
+          case \/-(s) => Ok(s.map(x => s"""${x.title.get} - ${x.artist.get}  (${x.time.get})""" ).getOrElse("No song playing."))
           case -\/(e) => Ok(s"Invalid song: $e")
         } 
       }
     }
   }
 
+  def eventFeed = Action {
+    val events = Enumerator("kiki", "foo", "bar")
+    Ok.stream(events &> Comet(callback = "parent.cometMessage"))
+  }
+  
+  def blank = Action {
+    Ok("")
+  } 
+  
+  
   /**
    * Debug!
    */

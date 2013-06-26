@@ -12,7 +12,9 @@ GET     /stop                       controllers.Application.stop
 GET     /prev                       controllers.Application.prev
 GET     /pause                      controllers.Application.pause
 GET     /currentSong                controllers.Application.currentSong
+GET     /eventfeed                  controllers.Application.eventFeed
 GET     /reconnect                  controllers.Application.reconnect
+GET     /blank                      controllers.Application.blank
 # Playlist commands
 
 # Search
