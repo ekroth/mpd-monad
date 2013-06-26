@@ -1,13 +1,16 @@
 package controllers
 
 import scala.concurrent.ExecutionContext.Implicits.global
+import scala.concurrent._
 import play.api._
 import play.api.libs.Comet
 import play.api.libs.iteratee._
 import play.api.mvc._
 import mpd._
+import mpd.messages.Result.DefaultT
 import mpd.std._
 import mpd.messages._
+import mpd.messages.SubSystem._
 
 object Application extends Controller {
 
@@ -17,18 +20,19 @@ object Application extends Controller {
   val srv = new ServerMsgStd 
     with ExecutorComponentStd 
     with MpdComponentSync 
-    with ServerDebug 
+    with ServerDebug
     with PlaybackMsgStd 
     with StatusMsgStd 
   val event = new ServerMsgStd 
     with ExecutorComponentStd 
     with MpdComponentSync 
-    with ServerDebug 
+    with ServerDebug
     with PlaybackMsgStd 
     with StatusMsgStd 
 
-  val connection = srv.mpd.connect("192.168.1.2",6600)
-
+  srv.mpd.connect("192.168.1.2",6600)
+  event.mpd.connect("192.168.1.2",6600)
+//  event.idle(player) onComplete handleStatus
   def index(cmd: String = "index") = Action {
     Ok(views.html.main(getPlayList))
   }
@@ -40,9 +44,10 @@ object Application extends Controller {
      Nil
   }
   
-  def issueCmd[T](cmd: => T) = { 
-    cmd
-    Redirect("/")
+  def issueCmd[T](cmd: => Future[DefaultT[T]]) = { 
+    println("woo")
+    cmd onComplete { case x => println(x) }
+    Ok("ok")
   } 
 
   def pley = Action {
@@ -79,14 +84,23 @@ object Application extends Controller {
 
   def eventFeed = Action {
     val events = Enumerator("kiki", "foo", "bar")
-    Ok.stream(events &> Comet(callback = "parent.cometMessage"))
+    Ok.stream(clock &> Comet(callback = "parent.cometMessage"))
   }
   
   def blank = Action {
     Ok("")
   } 
   
-  
+  lazy val clock: Enumerator[String] = {
+    Enumerator.generateM{ 
+      for (x <- event.idle()) yield {
+        x match { 
+          case \/-(v) => ; v.mkString(", ").some 
+          case _ => None
+        }
+      }
+    }
+  }
   /**
    * Debug!
    */

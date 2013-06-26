@@ -7,7 +7,14 @@ function updateCurrSong(httpResponse) {
   document.getElementById("currSong").innerHTML = httpResponse.responseText
 }
 updatePageFetch("currentSong",updateCurrSong)
-setInterval(function() {updatePageFetch("currentSong",updateCurrSong)}, 2000)
+
+
+var cometMessage = function(event) {
+  console.log(event) 
+  if (event == "player") {
+    updatePageFetch("currentSong",updateCurrSong)
+  }
+} 
 
 function logResponse(v) {
   console.log(v.responseText)
