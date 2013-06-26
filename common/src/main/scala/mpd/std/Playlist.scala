@@ -23,12 +23,10 @@ trait PlaylistMsgStd extends PlaylistMsg {
       }
     }
 
-    wread("playlistinfo") map { v =>
-      v map { s =>
-        val vpairs = MpdParse.valuePairs(s)
-        val pairs = grouper(vpairs, vpairs.headOption)
-        for (p <- pairs) yield MpdParse.parseSong(p.toMap)
-      }
+    wread("playlistinfo") map { s =>
+      val vpairs = MpdParse.valuePairs(s)
+      val pairs = grouper(vpairs, vpairs.headOption)
+      for (p <- pairs) yield MpdParse.parseSong(p.toMap)
     }
   }
 }

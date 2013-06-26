@@ -5,7 +5,6 @@ import scala.concurrent._
 import ExecutionContext.Implicits.global
 
 import messages.{ ServerMsg, ExecutorComponent }
-import messages.Result.PossibleError
 
 trait ServerMsgStd extends ServerMsg {
   self: ExecutorComponent with MpdComponent =>

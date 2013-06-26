@@ -3,8 +3,6 @@ package messages
 
 import scala.concurrent.Future
 
-import Result._
-
 trait PlaylistMsg extends ServerMsg {
   this: ExecutorComponent =>
   /* add
@@ -20,7 +18,7 @@ trait PlaylistMsg extends ServerMsg {
    */
 
   /** Seq of songs of current playlist */
-  def playlistinfo(): Future[DefaultT[Seq[Song]]]
+  def playlistinfo(): Future[Seq[Song]]
 
   /* playlistsearch
    * plchanges

@@ -3,8 +3,6 @@ package messages
 
 import scala.concurrent.Future
 
-import Result._
-
 object State extends Enumeration {
   type State = Value
   val play, stop, pause = Value
@@ -39,13 +37,13 @@ trait StatusMsg extends ServerMsg {
   // clearerror
 
   /** Displays the metadata of the current song. */
-  def currentsong(): Future[DefaultT[Option[Song]]]
+  def currentsong(): Future[Option[Song]]
 
   // idle [SUBSYSTEMS...]
   /** Returns a Seq of which subsystems that were updated */
-  def idle(xs: SubSystem*): Future[DefaultT[Seq[SubSystem]]]
+  def idle(xs: SubSystem*): Future[Seq[SubSystem]]
 
-  def status(): Future[DefaultT[Status]]
+  def status(): Future[Status]
 
   // stats
 
