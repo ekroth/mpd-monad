@@ -2,18 +2,18 @@ package controllers
 
 import scala.concurrent.ExecutionContext.Implicits.global
 import scala.concurrent._
+
 import play.api._
 import play.api.libs.Comet
 import play.api.libs.iteratee._
 import play.api.mvc._
-import mpd._
-import mpd.messages.Result.DefaultT
+
+import mpd.Song
 import mpd.std._
 import mpd.messages._
 import mpd.messages.SubSystem._
 
 object Application extends Controller {
-
   import scalaz._
   import Scalaz._
 
@@ -30,21 +30,21 @@ object Application extends Controller {
     with PlaybackMsgStd 
     with StatusMsgStd 
 
-  srv.mpd.connect("192.168.1.2",6600)
-  event.mpd.connect("192.168.1.2",6600)
-//  event.idle(player) onComplete handleStatus
+  srv.mpd.connect("192.168.1.2", 6600)
+  event.mpd.connect("192.168.1.2", 6600)
+
   def index(cmd: String = "index") = Action {
     Ok(views.html.main(getPlayList))
   }
 
   def getPlayList = {
-      val dsa = "dsa".some
-     Song(dsa,dsa,0.some,dsa,dsa,dsa,dsa,dsa,dsa,Seq("dsa").some,dsa,dsa,0.some,0.some) :: 
-     Song(dsa,dsa,0.some,dsa,dsa,dsa,dsa,dsa,dsa,Seq("dsa").some,dsa,dsa,0.some,0.some) :: 
-     Nil
+    val dsa = "dsa".some
+    Song(dsa,dsa,0.some,dsa,dsa,dsa,dsa,dsa,dsa,Seq("dsa").some,dsa,dsa,0.some,0.some) :: 
+    Song(dsa,dsa,0.some,dsa,dsa,dsa,dsa,dsa,dsa,Seq("dsa").some,dsa,dsa,0.some,0.some) :: 
+    Nil
   }
   
-  def issueCmd[T](cmd: => Future[DefaultT[T]]) = { 
+  def issueCmd[T](cmd: => Future[T]) = { 
     println("woo")
     cmd onComplete { case x => println(x) }
     Ok("ok")
@@ -72,12 +72,12 @@ object Application extends Controller {
 
   def currentSong = Action {
     Async {
-      srv.currentsong.map { 
-        _ match {
-          //TODO: getOrElse for x attributes
-          case \/-(s) => Ok(s.map(x => s"""${x.title.get} - ${x.artist.get}  (${x.time.get})""" ).getOrElse("No song playing."))
-          case -\/(e) => Ok(s"Invalid song: $e")
-        } 
+      srv.currentsong map { v =>
+	val opt = v map { x =>
+          Ok(s"""${x.title.get} - ${x.artist.get}  (${x.time.get})""")
+	}
+
+	opt.getOrElse(Ok("No song playing"))
       }
     }
   }
@@ -92,23 +92,21 @@ object Application extends Controller {
   } 
   
   lazy val clock: Enumerator[String] = {
-    Enumerator.generateM{ 
-      for (x <- event.idle()) yield {
-        x match { 
-          case \/-(v) => ; v.mkString(", ").some 
-          case _ => None
-        }
-      }
+    Enumerator.generateM { 
+      event.idle() map { _.mkString(", ").some } 
     }
   }
+
   /**
    * Debug!
    */
   def reconnect = Action {
     srv.mpd.disconnect
     srv.mpd.connect("192.168.1.2",6600)
+
+    event.mpd.disconnect
+    event.mpd.connect("192.168.1.2", 6600)
+
     Ok("Andrée is the webprogrammer")
   }
-
-
 }
