@@ -7,13 +7,7 @@ import Result._
 
 object State extends Enumeration {
   type State = Value
-  val Play, Stop, Pause = Value
-
-  def apply(s: String) = s match {
-    case "play" => Play
-    case "stop" => Stop
-    case "pause" => Pause
-  }
+  val play, stop, pause = Value
 }
 
 import State._
@@ -30,6 +24,16 @@ case class Status(
   bitrate: Int, audio: String,
   nextsong: Int, nextsongid: Int)
 
+object SubSystem extends Enumeration {
+  type SubSystem = Value
+  val database, update, stored_playlist, 
+      playlist, player, mixer, 
+      output, options, sticker, 
+      subscription, message = Value
+}
+
+import SubSystem._
+
 trait StatusMsg extends ServerMsg {
   this: ExecutorComponent =>
   // clearerror
@@ -38,6 +42,9 @@ trait StatusMsg extends ServerMsg {
   def currentsong(): Future[DefaultT[Option[Song]]]
 
   // idle [SUBSYSTEMS...]
+  /** Returns a Seq of which subsystems that were updated */
+  def idle(xs: SubSystem*): Future[DefaultT[Seq[SubSystem]]]
+  final def idle(): Future[DefaultT[Seq[SubSystem]]] = idle()
 
   def status(): Future[DefaultT[Status]]
 

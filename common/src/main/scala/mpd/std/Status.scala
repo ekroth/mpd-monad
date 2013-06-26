@@ -4,7 +4,8 @@ package std
 import scala.concurrent._
 import ExecutionContext.Implicits.global
 
-import messages.{ StatusMsg, Status, State => MState, ExecutorComponent }
+import messages.{ StatusMsg, Status, State => MState, ExecutorComponent, SubSystem }
+import messages.SubSystem._
 import mpd.util.MpdParse
 
 trait StatusMsgStd extends StatusMsg {
@@ -13,15 +14,27 @@ trait StatusMsgStd extends StatusMsg {
   import Scalaz._
 
   override def currentsong() = wread("currentsong") map { x =>
-   for (v <- x) yield {
+   x map { v =>
       val song = MpdParse.parseSong(MpdParse.mapValues(v))
       if (song.file.isDefined) song.some
       else none
     }
   }
 
-  override def status() = for (x <- wread("status")) yield {
-    for (v <- x) yield {
+  override def idle(xs: SubSystem*) = wread(s"""idle ${xs.mkString(" ")}""") map { x =>
+    x map { v =>
+      v flatMap { l: String =>
+        val reg = "changed: (.*)".r
+        l match {
+	  case reg(s) => SubSystem.withName(s).some
+          case _ => None
+        }
+      }
+    }
+  }
+
+  override def status() = wread("status") map { x =>
+    x map { v =>
       val s = MpdParse.mapValues(v)
 
       Status(
@@ -35,7 +48,7 @@ trait StatusMsgStd extends StatusMsg {
         s("xfade").head.toInt,
         s("mixrampdb").head,
         s("mixrampdelay").head,
-        MState(s("state").head),
+        MState.withName(s("state").head),
         s("song").head.toInt,
         s("songid").head.toInt,
         s("time").head,
