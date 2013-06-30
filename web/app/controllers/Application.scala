@@ -8,7 +8,7 @@ import play.api.libs.Comet
 import play.api.libs.iteratee._
 import play.api.mvc._
 
-import mpd.Song
+import mpd._
 import mpd.std._
 import mpd.messages._
 import mpd.messages.SubSystem._
@@ -30,8 +30,8 @@ object Application extends Controller {
     with PlaybackMsgStd 
     with StatusMsgStd 
 
-  srv.mpd.connect("192.168.1.2", 6600)
-  event.mpd.connect("192.168.1.2", 6600)
+  srv.mpd.connect("192.168.1.2",6700)
+  event.mpd.connect("192.168.1.2",6700)
 
   def index(cmd: String = "index") = Action {
     Ok(views.html.main(getPlayList))
@@ -45,12 +45,11 @@ object Application extends Controller {
   }
   
   def issueCmd[T](cmd: => Future[T]) = { 
-    println("woo")
     cmd onComplete { case x => println(x) }
-    Ok("ok")
+    Ok("ok").withHeaders("Cache-Control" -> "no-store, no-cache")
   } 
 
-  def pley = Action {
+  def pley() = Action {
     issueCmd(srv.play())
   }
 
@@ -77,13 +76,12 @@ object Application extends Controller {
           Ok(s"""${x.title.get} - ${x.artist.get}  (${x.time.get})""")
 	}
 
-	opt.getOrElse(Ok("No song playing"))
+	      opt.getOrElse(Ok("No song playing"))
       }
     }
   }
 
   def eventFeed = Action {
-    val events = Enumerator("kiki", "foo", "bar")
     Ok.stream(clock &> Comet(callback = "parent.cometMessage"))
   }
   
@@ -102,11 +100,11 @@ object Application extends Controller {
    */
   def reconnect = Action {
     srv.mpd.disconnect
-    srv.mpd.connect("192.168.1.2",6600)
-
+    srv.mpd.connect("192.168.1.2",6700)
     event.mpd.disconnect
-    event.mpd.connect("192.168.1.2", 6600)
+    event.mpd.connect("192.168.1.2",6700)
 
     Ok("Andrée is the webprogrammer")
   }
+ 
 }
