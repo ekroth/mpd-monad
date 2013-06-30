@@ -34,14 +34,15 @@ import mpd.messages.SubSystem._
 
 trait StatusMsg extends ServerMsg {
   this: ExecutorComponent =>
-  // clearerror
+  def clearError(): Future[Unit]
 
   /** Displays the metadata of the current song. */
-  def currentsong(): Future[Option[Song]]
+  def currentSong(): Future[Option[Song]]
 
-  // idle [SUBSYSTEMS...]
   /** Returns a Seq of which subsystems that were updated */
-  def idle(xs: SubSystem*): Future[Seq[SubSystem]]
+  def idle(xs: Set[SubSystem]): Future[Seq[SubSystem]]
+
+  final def idle(): Future[Seq[SubSystem]] = idle(SubSystem.values)
 
   def status(): Future[Status]
 

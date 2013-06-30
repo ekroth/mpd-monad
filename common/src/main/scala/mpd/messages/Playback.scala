@@ -5,6 +5,7 @@ import scala.concurrent.Future
 
 trait PlaybackMsg extends ServerMsg {
   this: ExecutorComponent =>
+
   /** Plays next song in playlist. */
   def next(): Future[Unit]
 
@@ -14,7 +15,7 @@ trait PlaybackMsg extends ServerMsg {
   def pause(p: Option[Boolean]): Future[Unit]
 
   /** Toggle pause / resume playing. */
-  def pause(): Future[Unit] = pause(None)
+  final def pause(): Future[Unit] = pause(None)
 
   /** Begin playing the playlist.
    * @param i The song to begin playing the playlist at, it is optional, the default is -1.
@@ -22,20 +23,24 @@ trait PlaybackMsg extends ServerMsg {
   def play(i: Option[Int]): Future[Unit]
 
   /** Begin playing the playlist. */
-  def play(): Future[Unit] = play(None)
+  final def play(): Future[Unit] = play(None)
 
   /** Begin playing playlist.
    * @param i The songid to begin the playlist playing at, it is optional, the default is 0.
    */
-  // def playid(i: Option[Int]): Future[Unit]
+  def playid(i: Option[Int]): Future[Unit]
+
+  /** Begin playing the playlist. */
+  def playid(): Future[Unit] = playid(None)
 
   /** Plays previous song in playlist. */
   def previous(): Future[Unit]
 
-  /* seek
-   * seekid
-   * setvol
-   */
+  def seek(pos: Int, time: Int): Future[Unit]
+  
+  def seekid(id: Int, time: Int): Future[Unit]
+  
+  def seekcur(time: Int): Future[Unit]
   
   /** To halt playing. */
   def stop(): Future[Unit]

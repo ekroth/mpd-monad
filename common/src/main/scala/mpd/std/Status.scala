@@ -13,13 +13,15 @@ trait StatusMsgStd extends StatusMsg {
   import scalaz._
   import Scalaz._
 
-  override def currentsong() = wread("currentsong") map { x =>
+  override def clearError() = raw("clearerror")
+
+  override def currentSong() = wread("currentsong") map { x =>
     val song = MpdParse.parseSong(MpdParse.mapValues(x))
     if (song.file.isDefined) song.some
     else none
   }
 
-  override def idle(xs: SubSystem*) = wread(s"""idle ${xs.mkString(" ")}""") map { x =>
+  override def idle(xs: Set[SubSystem]) = wread(s"""idle ${xs.mkString(" ")}""") map { x =>
     x flatMap { l =>
       val reg = "changed: (.*)".r
       l match {
