@@ -40,9 +40,9 @@ trait StatusMsg extends ServerMsg {
   def currentSong(): Future[Option[Song]]
 
   /** Returns a Seq of which subsystems that were updated */
-  def idle(xs: Set[SubSystem]): Future[Seq[SubSystem]]
+  def idle(xs: Set[SubSystem]): Future[Set[SubSystem]]
 
-  final def idle(): Future[Seq[SubSystem]] = idle(SubSystem.values)
+  final def idle(): Future[Set[SubSystem]] = idle(SubSystem.values)
 
   def status(): Future[Status]
 

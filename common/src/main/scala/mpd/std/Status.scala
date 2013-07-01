@@ -22,14 +22,14 @@ trait StatusMsgStd extends StatusMsg {
   }
 
   override def idle(xs: Set[SubSystem]) = wread(s"""idle ${xs.mkString(" ")}""") map { x =>
-    x flatMap { l =>
+    (x flatMap { l =>
       val reg = "changed: (.*)".r
       l match {
 	case reg(s) => SubSystem.withName(s).some
 	case _ => None
       }
-    }
-  }
+    }).toSet
+  } 
 
   override def status() = wread("status") map { x =>
     val s = MpdParse.mapValues(x)
