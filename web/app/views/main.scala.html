@@ -1,4 +1,4 @@
-@(playList: List[mpd.Song])
+@(playList: List[mpd.Song], currentSong: String)
 
 <!DOCTYPE html>
 <html lang="en">
@@ -23,7 +23,7 @@
     <div class="container-fluid">
       <div class="row-fluid">
         <div class="span12"> 
-          <h3 id="currSong">Fetching current song.</h3>
+          <h3 id="currSong">@currentSong</h3>
           <div class="btn-toolbar">
             <div class"btn-group">
               <button class="btn" onclick="prev()"><i class="icon-step-backward"></i></button>
@@ -41,7 +41,6 @@
       </div>
 
   </div>
-<!-- Placeholder shit right herey0 -->
 
 <!--   --> 
 <iframe id="feed" src="/eventfeed" style="visibility:hidden">
