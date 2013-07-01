@@ -6,24 +6,38 @@ import scala.concurrent.Future
 trait ServerMsg {
   this: ExecutorComponent =>
 
-  def raw(s: String): Future[Unit]
+  private[this] def makeCmd(s: String, a1: String): String = s"""$s "$a1""""
 
-  final def raw(s: String, a1: String): Future[Unit] = raw(s"""$s "$a1"""")
-
-  final def raw(s: String, a1: String, as: String*): Future[Unit] = {
+  private[this] def makeCmd(s: String, a1: String, as: Seq[String]): String = {
     val args = (a1 +: as) map { x => s""""$x"""" } mkString(" ")
-    raw(s"""$s $args""")
+    s"""$s $args"""
   }
 
-  def read(): Future[Vector[String]]
+  /* raw */
 
-  def clear(): Future[Unit]
+  def raw(s: String): Future[Unit]
 
-  def wread(s: String) = for {
+  final def raw(s: String, a1: String): Future[Unit] = raw(makeCmd(s, a1))
+
+  final def raw(s: String, a1: String, as: String*): Future[Unit] = raw(makeCmd(s, a1, as))
+
+  /* wread */
+
+  def wread(s: String): Future[Vector[String]] = for {
     _ <- clear
     _ <- raw(s)
     x <- read
   } yield x
+
+  final def wread(s: String, a1: String): Future[Vector[String]] = wread(makeCmd(s, a1))
+
+  final def wread(s: String, a1: String, as: String*): Future[Vector[String]] = wread(makeCmd(s, a1, as))
+
+  /* various */
+
+  def read(): Future[Vector[String]]
+
+  def clear(): Future[Unit]
 
   def required: Set[String]
 }

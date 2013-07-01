@@ -17,21 +17,21 @@ trait PlaybackMsgStd extends PlaybackMsg {
   override def next() = raw("next")
   
   override def pause(p: Option[Boolean]) =
-    raw(s"pause ${p.getOrElse(false).toMpd}")
+    raw("pause", s"${p.getOrElse(false).toMpd}")
   
   override def play(i: Option[Int]) =
-    raw(s"play ${i.getOrElse(-1)}")
+    raw("play", s"${i.getOrElse(-1)}")
   
   override def playid(i: Option[Int]) = 
-    raw(s"playid ${i.getOrElse(0)}")
+    raw("playid", s"${i.getOrElse(0)}")
   
   override def previous() = raw("previous")
 
-  override def seek(pos: Int, time: Int) = raw(s"seek $pos $time")
+  override def seek(pos: Int, time: Int) = raw("seek", s"$pos", s"$time")
 
-  override def seekid(id: Int, time: Int) = raw(s"seekid $id $time")
+  override def seekid(id: Int, time: Int) = raw("seekid", s"$id", s"$time")
   
-  override def seekcur(time: Int) = raw(s"seekcur $time")
+  override def seekcur(time: Int) = raw("seekcur", s"$time")
   
   override def stop() = raw("stop")
 }
