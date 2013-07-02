@@ -31,18 +31,9 @@ object Application extends Controller {
     with StatusMsgStd 
 
   def index = Action {
-    try {
-      Async { 
-        srv.currentSong map { v =>
-          val opt = v map { x =>
-            Ok(views.html.main(getPlayList,s"""${x.title.get} - ${x.artist.get}  (${x.time.get})"""))
-          }
-          opt.getOrElse(Ok(views.html.main(getPlayList, "No song playing")))
-        } 
-      }
-    } catch {
-      case x: Throwable => Redirect("/connect")
-    }
+
+          Ok(views.html.main(getPlayList))
+
   }
 
   def getPlayList = {
