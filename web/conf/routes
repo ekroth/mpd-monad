@@ -3,17 +3,17 @@
 # ~~~~
 
 # Home page
-GET     /                           controllers.Application.index()
+GET     /                           controllers.Application.index
 
 # Playback commands  
 GET     /next                       controllers.Application.next
-GET     /pley                       controllers.Application.pley
+GET     /play                       controllers.Application.pley
 GET     /stop                       controllers.Application.stop
 GET     /prev                       controllers.Application.prev
 GET     /pause                      controllers.Application.pause
 GET     /currentSong                controllers.Application.currentSong
 GET     /eventfeed                  controllers.Application.eventFeed
-GET     /reconnect                  controllers.Application.reconnect
+GET     /connect                    controllers.Application.connect
 GET     /blank                      controllers.Application.blank
 # Playlist commands
 

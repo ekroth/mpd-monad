@@ -30,11 +30,10 @@ object Application extends Controller {
     with PlaybackMsgStd 
     with StatusMsgStd 
 
-  srv.mpd.connect("192.168.1.2",6700)
-  event.mpd.connect("192.168.1.2",6700)
+  def index = Action {
 
-  def index(cmd: String = "index") = Action {
-    Ok(views.html.main(getPlayList))
+          Ok(views.html.main(getPlayList))
+
   }
 
   def getPlayList = {
@@ -49,7 +48,7 @@ object Application extends Controller {
     Ok("ok").withHeaders("Cache-Control" -> "no-store, no-cache")
   } 
 
-  def pley() = Action {
+  def pley = Action {
     issueCmd(srv.play())
   }
 
@@ -71,12 +70,11 @@ object Application extends Controller {
 
   def currentSong = Action {
     Async {
-      srv.currentsong map { v =>
-	val opt = v map { x =>
-          Ok(s"""${x.title.get} - ${x.artist.get}  (${x.time.get})""")
-	}
-
-	      opt.getOrElse(Ok("No song playing"))
+      srv.currentSong map { v =>
+	      val opt = v map { x =>
+          Ok(s"""${x.title.get} - ${x.artist.get}  (${x.time.get})""").withHeaders("Cache-Control" -> "no-store, no-cache")
+	      }
+	      opt.getOrElse(Ok("No song playing")).withHeaders("Cache-Control" -> "no-store, no-cache")
       }
     }
   }
@@ -95,16 +93,16 @@ object Application extends Controller {
     }
   }
 
-  /**
-   * Debug!
-   */
-  def reconnect = Action {
+  def connect = Action {
+    try {
     srv.mpd.disconnect
     srv.mpd.connect("192.168.1.2",6700)
     event.mpd.disconnect
     event.mpd.connect("192.168.1.2",6700)
-
     Ok("Andrée is the webprogrammer")
+    } catch { 
+      case x: Throwable => Ok(x.getMessage)
+    }
   }
  
 }
