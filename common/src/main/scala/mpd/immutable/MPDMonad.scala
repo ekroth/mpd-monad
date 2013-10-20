@@ -11,6 +11,9 @@ package object immutable {
   final case class MPDB(inCL: Boolean, flushed: Boolean)
   final case class MPDC(addr: InetSocketAddress, socket: JSocket, read: BufferedReader, out: OutputStream)
   final type MPDS = (MPDB, MPDC)
+
+  
+
 }
 
 final object MPDInternal extends MPDInternalTypes
@@ -23,6 +26,65 @@ sealed trait MPDInternalTypes {
   val ACKr = """$ACKStr [(.*)@(.*)] \{(.*)\}(.*)""".r
   val Encoding = "UTF-8"
   val Timeout = 10000
+}
+
+final object MPDCustom extends MPDCustomMonad
+trait MPDCustomMonad {
+  import scalaz._
+  import Scalaz._
+  import immutable._
+  import MPDInternal._
+
+
+  case class MPDState(flushed: Boolean)
+
+  sealed trait MPDFailure
+  final case class MPDUnknown(e: Exception) extends MPDFailure
+  final case class MPDAuth(cmd: String) extends MPDFailure
+  final case class MPDBogus(response: String) extends MPDFailure
+  
+  type MPD[+A] = StateT[({ type l[+X] = \/[MPDFailure, X] })#l, MPDState, A]
+
+  final object MPD extends StateTFunctions with StateTInstances {
+    def apply[A](f: MPDState => MPDFailure \/ (MPDState, A)): MPD[A] = new MPD[A] {
+      def apply(s: MPDState) = f(s)
+    }
+  }
+
+  def flush() = MPD[Unit] {
+    x => (x copy (flushed = true), ()).right
+  }
+
+  def bogus(s: String) = MPD[String] {
+    x => MPDBogus("I don't care: $s.").left
+  }
+
+  def mustflushed() = MPD[String] {
+    case MPDState(false) => MPDBogus("Hey no flush!").left
+    case x => (x, "Good!").right
+  }
+
+  def copycat(s: String) = MPD[String] {
+    x => (x copy (flushed = false), s).right
+  }
+
+  def scen1(): MPD[String] = for {
+    s1 <- copycat("heyo")
+    _ <- flush
+    _ <- mustflushed
+    s2 <- copycat("hey again")
+    _ <- flush
+    _ <- mustflushed
+  } yield (s1 + s2) // \/-((MPDState(true),heyohey again))
+
+  def scen2(): MPD[String] = for {
+    s1 <- copycat("heyo")
+    _ <- flush
+    _ <- mustflushed
+    s2 <- copycat("hey again")
+    _ <- mustflushed
+  } yield (s1 + s2) // -\/(MPDBogus(Hey no flush!))
+
 }
 
 trait MPDOps {
