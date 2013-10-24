@@ -96,6 +96,13 @@ trait BaseFunctions {
 
   /** write command list end */
   def clend() = writeln(CmdEnd)
+
+  /** encapsulate in command list */
+  def cl[A](f: MPD[A]) = for {
+    _ <- clbegin
+    x <- f
+    _ <- clend
+  } yield x
   
   /** read lines until end, blocking until first line */
   def read() = MPDF[Vector[String]] {
@@ -107,9 +114,11 @@ trait BaseFunctions {
           case OK() => out.right
           case x => readEnd(out :+ x)
 	}
-
       
-      readEnd(Vector.empty) map { (s, _) }
+      readEnd(Vector.empty) match {
+	case \/-(x) => (s, x).right
+	case -\/(x) => x.left
+      }
     }
   }
 

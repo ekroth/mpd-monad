@@ -17,7 +17,8 @@ object build extends Build {
 	resolvers += "Typesafe Repository" at "http://repo.typesafe.com/typesafe/snapshots/",
 	libraryDependencies ++= Seq("org.scalaz" %% "scalaz-core" % "7.0.0",
 				    "com.typesafe.akka" %% "akka-actor" % "2.1.0",
-				    "org.scalatest" % "scalatest_2.10" % "1.9.1" % "test")
+				    "org.scalatest" % "scalatest_2.10" % "1.9.1" % "test"),
+	initialCommands += """import mpd._; import AllFunctions._; import AllInstances._"""
 	)
       )
   }
