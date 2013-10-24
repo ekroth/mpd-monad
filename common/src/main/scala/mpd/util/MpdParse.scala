@@ -2,7 +2,7 @@ package mpd
 package util
 
 object MpdParse {
-  val songr = """([-\w]*): (.*)""".r
+/*  val songr = """([-\w]*): (.*)""".r
 
   def valuePairs(v: Traversable[String]) = {
     val matches = songr.findAllMatchIn(v.mkString("\n"))
@@ -40,5 +40,5 @@ object MpdParse {
          ohead(s, "track"),
          ohead(s, "pos") map { _.toInt },
          ohead(s, "id") map { _.toInt })
-  }
+  }*/
 }
