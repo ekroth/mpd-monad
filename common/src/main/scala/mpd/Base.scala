@@ -14,7 +14,7 @@ final case class MPDUnknown(e: Exception) extends MPDFailure
 final case class MPDAck(err: String, num: String, cmd: String, msg: String) extends MPDFailure
 final case class MPDBogus(response: String) extends MPDFailure
 
-trait BaseFunctions {
+trait Base {
   import BaseInstances._
 
   /** get state */
@@ -131,8 +131,6 @@ trait BaseFunctions {
   }
 }
 
-final object BaseFunctions extends BaseFunctions
-
 trait BaseInstances {
   /** MPD with explicit MPDFailure */
   final object MPDF extends StateTFunctions with StateTInstances {
@@ -148,6 +146,8 @@ trait BaseInstances {
 	try { f(s).right } catch { case e: Exception => MPDUnknown(e).left }
     }
   }
+
+  implicit val baseImplicit: Base = new Base { }
   
   val OKStr = "OK"
   val ACKStr = "ACK"

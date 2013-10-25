@@ -1,36 +1,49 @@
 package mpd
 
-trait SoundCloudFunctions {
-  this: BaseFunctions =>
+import scalaz._
 
+case class SCTrack(id: Int) {
+  def path = s"${SCInstances.URI}://track/$id"  
+}
+
+case class SCPlaylist(id: Int) {
+  def path = s"${SCInstances.URI}://playlist/$id"
+}
+
+case class SCURL(url: String) {
+  def path = s"${SCInstances.URI}://url/$url"
+}
+
+trait SC {
   import BaseInstances._
-  import SoundCloudInstances._
+  import SCInstances._
 
   /** load track by id */
-  def loadSCTrack(id: Int): MPD[Unit] = for {
-    _ <- clbegin
-    _ <- writeln("load " + scTrack(id.toString))
-    _ <- clend
+  def load(id: SCTrack)(implicit b: Base): MPD[Unit] = for {
+    _ <- b.clbegin
+    _ <- b.writeln("load " + id.path)
+    _ <- b.clend
   } yield ()
 
   /** load playlist by id */
-  def loadSCPlaylist(id: Int): MPD[Unit] = for {
-    _ <- clbegin
-    _ <- writeln("load " + scPlaylist(id.toString))
-    _ <- clend
+  def load(id: SCPlaylist)(implicit b: Base): MPD[Unit] = for {
+    _ <- b.clbegin
+    _ <- b.writeln("load " + id.path)
+    _ <- b.clend
   } yield ()
 
-  def scPlaylist(id: String) = s"$URI://playlist/$id"
-  def scTrack(id: String) =  s"$URI://track/$id"  
-  def scURL(url: String) = s"$URI://url/$url"
+  /** load playlist/track by url */
+  def load(url: SCURL)(implicit b: Base): MPD[Unit] = for {
+    _ <- b.clbegin
+    _ <- b.writeln("load " + url.path)
+    _ <- b.clend
+  } yield ()
 }
 
-final object SoundCloudFunctions 
-      extends SoundCloudFunctions
-      with BaseFunctions
+trait SCInstances {
+  implicit object SC extends SC
 
-trait SoundCloudInstances {
   val URI = "soundcloud"
 }
 
-final object SoundCloudInstances extends SoundCloudInstances
+final object SCInstances extends SCInstances

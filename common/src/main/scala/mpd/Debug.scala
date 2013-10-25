@@ -3,16 +3,11 @@ package mpd
 import scalaz._
 import Scalaz._
 
-trait DebugFunctions extends BaseFunctions {
+trait Debug extends Base {
   import BaseInstances._
 
   def bogus(s: String) = MPDF[String] {
     x => MPDBogus(s"I don't care: $s.").left
-  }
-
-  def mustflushed() = MPDF[String] {
-    case MPDS(false, _) => MPDBogus("Hey no flush!").left
-    case x => (x, "Good!").right
   }
 
   def copycat(s: String) = MPD[String] {
@@ -35,4 +30,8 @@ trait DebugFunctions extends BaseFunctions {
   } yield r
 }
 
-final object DebugFunctions extends DebugFunctions
+trait DebugInstances extends BaseInstances {
+  override implicit val baseImplicit = new Debug { }
+}
+
+final object DebugInstances extends DebugInstances

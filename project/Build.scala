@@ -18,7 +18,9 @@ object build extends Build {
 	libraryDependencies ++= Seq("org.scalaz" %% "scalaz-core" % "7.0.0",
 				    "com.typesafe.akka" %% "akka-actor" % "2.1.0",
 				    "org.scalatest" % "scalatest_2.10" % "1.9.1" % "test"),
-	initialCommands += """import mpd._; import AllFunctions._; import AllInstances._"""
+	initialCommands += """import mpd._ 
+			      import AllInstances._
+			      //import implicitly[Base]._"""
 	)
       )
   }
