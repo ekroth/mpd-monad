@@ -11,7 +11,7 @@ case class SCPlaylist(id: Int) {
 }
 
 case class SCURL(url: String) {
-  def path = s"${SCInstances.URI}://url/$url"
+  def path = s"${SCInstances.URI}://url/${url.replace("https", "http")}"
 }
 
 trait SC {
@@ -40,9 +40,9 @@ trait SC {
 }
 
 trait SCInstances {
-  implicit object SC extends SC
-
   val URI = "soundcloud"
+
+  implicit val scImplicit = new SC { }
 }
 
 final object SCInstances extends SCInstances

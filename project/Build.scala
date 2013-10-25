@@ -18,12 +18,15 @@ object build extends Build {
 	libraryDependencies ++= Seq("org.scalaz" %% "scalaz-core" % "7.0.0",
 				    "com.typesafe.akka" %% "akka-actor" % "2.1.0",
 				    "org.scalatest" % "scalatest_2.10" % "1.9.1" % "test"),
-	initialCommands += """import mpd._ 
-			      import AllInstances._
-			      //import implicitly[Base]._
+	initialCommands += 
+	  """import mpd._ 
+	  import AllInstances._
+	  //import implicitly[Base]._
+	
+	  println("usage: \"useCon { c => (scImplicit.load(SCURL(https://soundcloud.com/steve-cobby/heeds))).run(c) }\"")
 
-			      val con = (implicitly[Base]).Connect("127.0.0.1", 6600)
-			      """
+	  val con = (implicitly[Base]).Connect("127.0.0.1", 6600)
+	  def useCon[T](f: mpd.MPDS => T) = for { m <- con } yield f(m)"""
 	)
       )
   }

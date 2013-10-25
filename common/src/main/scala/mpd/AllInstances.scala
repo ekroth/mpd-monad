@@ -2,7 +2,18 @@ package mpd
 
 trait AllInstances 
   extends BaseInstances
-  with SCInstances
+  with ConnectionInstances
   with DebugInstances
+  with MusicDbInstances
+  with OutputsInstances
+  with P2pInstances
+  with PlaybackOptsInstances
+  with PlaybackInstances
+  with PlaylistDbInstances
+  with PlaylistInstances
+  with ReflectionInstances
+  with SCInstances
+  with StatusInstances
+  with StickersInstances
 
 final object AllInstances extends AllInstances
