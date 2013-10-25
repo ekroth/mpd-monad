@@ -15,7 +15,6 @@ case class SCURL(url: String) {
 }
 
 trait SC {
-  import BaseInstances._
   import SCInstances._
 
   /** load track by id */

@@ -173,11 +173,6 @@ trait BaseInstances {
   val Timeout = 10000
   val CmdBegin = "command_list_begin"
   val CmdEnd = "command_list_end"
-
-  val MPDMonadState = StateT.stateTMonadState[MPDS, MPDR]
-
-  type MPDR[+A] = MPDFailure \/ A
-  type MPD[+A] = StateT[MPDR, MPDS, A]
 }
 
 final object BaseInstances extends BaseInstances
