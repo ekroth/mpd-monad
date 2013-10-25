@@ -2,7 +2,10 @@ package mpd
 package util
 
 object MpdParse {
-/*  val songr = """([-\w]*): (.*)""".r
+  implicit  class BooleanMPD(val b: Boolean) extends AnyVal {
+    def toMpd = if (b) "1" else "0"
+  }
+  val songr = """([-\w]*): (.*)""".r
 
   def valuePairs(v: Traversable[String]) = {
     val matches = songr.findAllMatchIn(v.mkString("\n"))
@@ -40,5 +43,5 @@ object MpdParse {
          ohead(s, "track"),
          ohead(s, "pos") map { _.toInt },
          ohead(s, "id") map { _.toInt })
-  }*/
+  }
 }

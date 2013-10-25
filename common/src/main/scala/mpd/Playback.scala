@@ -3,6 +3,8 @@ package mpd
 import scalaz._
 
 trait Playback {
+  import util.MpdParse._
+
   /** next */
   def next()(implicit b: Base) = b.writeln("next")
  
@@ -12,11 +14,11 @@ trait Playback {
 
   /** play */
   def play(i: Option[Int])(implicit b: Base) = 
-    b.writeln(s"play id ${p.getOrElse(-1)}")
+    b.writeln(s"play ${i.getOrElse(-1)}")
 
   /** play id */
   def playid(i: Option[Int])(implicit b: Base) = 
-    b.writeln(s"playid ${p.getOrElse(-1)}")
+    b.writeln(s"playid ${i.getOrElse(-1)}")
 
   /** previous */
   def previous()(implicit b: Base) = b.writeln("previous")
@@ -26,7 +28,7 @@ trait Playback {
     b.writeln(s"seek $pos $time")
 
   /** seek by id to time */
-  def seek(id: Int, time: Int)(implicit b: Base) = 
+  def seekid(id: Int, time: Int)(implicit b: Base) = 
     b.writeln(s"seekid $id $time")
 
   /** seek by current to time */

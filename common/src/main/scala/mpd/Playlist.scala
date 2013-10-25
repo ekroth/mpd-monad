@@ -4,7 +4,7 @@ import scalaz._
 
 trait Playlist {
    def playlistinfo()(implicit b: Base) = {
-    @tailrec def grouper[T <: Tuple2[_, _]](xs: Seq[T],
+    @annotation.tailrec def grouper[T <: Tuple2[_, _]](xs: Seq[T],
 					    delim: Option[T],
 					    ys: Seq[Traversable[T]] = Seq.empty): Seq[Traversable[T]] = {
       if (xs.isEmpty || delim.isEmpty) ys

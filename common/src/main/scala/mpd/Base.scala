@@ -69,12 +69,6 @@ trait Base {
     }
   }
 
-  /** disconnect and connect */
-  def reconnect(): MPD[Unit] = for {
-    _ <- disconnect
-    _ <- connect
-  } yield ()
-
   /** clear input */
   def clear() = MPD[Unit] { 
     case x@MPDS(_, MPDC(_, socket, in, _)) => (x, in.skip(socket.getInputStream.available))
@@ -88,22 +82,6 @@ trait Base {
     }
   }
 
-  /** write with new line */
-  def writeln(cmd: String) = write(cmd + "\n")
-
-  /** write command list begin */
-  def clbegin() = writeln(CmdBegin)
-
-  /** write command list end */
-  def clend() = writeln(CmdEnd)
-
-  /** encapsulate in command list */
-  def cl[A](f: MPD[A]) = for {
-    _ <- clbegin
-    x <- f
-    _ <- clend
-  } yield x
-  
   /** read lines until end, blocking until first line */
   def read() = MPDF[Vector[String]] {
     case s@MPDS(_, MPDC(_, _, in, _)) => {
@@ -129,6 +107,42 @@ trait Base {
       (s copy (flushed = true), ())
     }
   }
+  
+  /** helpers */
+
+  /** disconnect and connect */
+  def reconnect(): MPD[Unit] = for {
+    _ <- disconnect
+    _ <- connect
+  } yield ()
+
+  /** write with new line */
+  def writeln(cmd: String) = write(cmd + "\n")
+
+  /** write command list begin */
+  def clbegin() = writeln(CmdBegin)
+
+  /** write command list end */
+  def clend() = writeln(CmdEnd)
+
+  /** encapsulate in command list */
+  def cl[A](f: MPD[A]) = for {
+    _ <- clbegin
+    x <- f
+    _ <- clend
+  } yield x
+  
+  /** write and read
+   * more specifically:
+   * clear, write in command list, flush and read */
+  def wread(cmd: String): MPD[Vector[String]] = for {
+    _ <- clear
+    _ <- clbegin
+    _ <- write(cmd)
+    _ <- clend
+    _ <- flush
+    s <- read
+  } yield s
 }
 
 trait BaseInstances {
