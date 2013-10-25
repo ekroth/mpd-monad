@@ -14,17 +14,17 @@ trait Debug extends Base {
     x => (x copy (flushed = false), s)
   }  
 
-  abstract override def write(cmd: String): MPD[Unit] = for {
+  override def write(cmd: String): MPD[Unit] = for {
     r <- super.write(cmd)
     _ = println(s"MPD: write -> $cmd")
   } yield r
 
-  abstract override def read(): MPD[Vector[String]] = for {
+  override def read(): MPD[Vector[String]] = for {
     r <- super.read()
     _ = println(s"MPD: read <- $r")
   } yield r
 
-  abstract override def flush(): MPD[Unit] = for {
+  override def flush(): MPD[Unit] = for {
     r <- super.flush()
     _ = println("MPD: flush")
   } yield r
