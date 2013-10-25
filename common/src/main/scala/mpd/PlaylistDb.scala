@@ -14,3 +14,9 @@ trait PlaylistDb {
    * save
    */
 }
+
+trait PlaylistDbInstances {
+  implicit val playlistDbImplicit = new PlaylistDb { }
+}
+
+final object PlaylistDbInstances extends PlaylistDbInstances

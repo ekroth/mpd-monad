@@ -6,3 +6,9 @@ trait Outputs {
    * outputs
    */
 }
+
+trait OutputsInstances {
+  implicit val outputsImplicit = new Outputs { }
+}
+
+final object OutputsInstances extends OutputsInstances

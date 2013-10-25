@@ -9,3 +9,9 @@ trait Stickers {
    * find
    */
 }
+
+trait StickersInstances {
+  implicit val stickersImplicit = new Stickers { }
+}
+
+final object StickersInstances extends StickersInstances

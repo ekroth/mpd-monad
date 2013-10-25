@@ -20,7 +20,10 @@ object build extends Build {
 				    "org.scalatest" % "scalatest_2.10" % "1.9.1" % "test"),
 	initialCommands += """import mpd._ 
 			      import AllInstances._
-			      //import implicitly[Base]._"""
+			      //import implicitly[Base]._
+
+			      val con = (implicitly[Base]).Connect("127.0.0.1", 6600)
+			      """
 	)
       )
   }

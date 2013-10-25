@@ -15,3 +15,9 @@ trait MusicDb {
    * rescan
    */
 }
+
+trait MusicDbInstances {
+  implicit val musicDbImplicit = new MusicDb { }
+}
+
+final object MusicDbInstances extends MusicDbInstances

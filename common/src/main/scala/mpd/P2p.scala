@@ -8,3 +8,9 @@ trait P2p {
    * sendmessage
    */
 }
+
+trait P2pInstances {
+  implicit val p2pImplicit = new P2p { }
+}
+
+final object P2pInstances extends P2pInstances

@@ -7,3 +7,9 @@ trait Connection {
    * ping
    */
 }
+
+trait ConnectionInstances {
+  implicit val connectionImplicit = new Connection { }
+}
+
+final object ConnectionInstances extends ConnectionInstances
