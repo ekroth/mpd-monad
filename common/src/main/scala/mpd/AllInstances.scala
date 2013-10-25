@@ -3,7 +3,6 @@ package mpd
 trait AllInstances 
   extends BaseInstances
   with ConnectionInstances
-  with DebugInstances
   with MusicDbInstances
   with OutputsInstances
   with P2pInstances

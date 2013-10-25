@@ -20,8 +20,8 @@ object build extends Build {
 				    "org.scalatest" % "scalatest_2.10" % "1.9.1" % "test"),
 	initialCommands += 
 	  """import mpd._ 
-	  import AllInstances._
-	  //import implicitly[Base]._
+	  object AllInstancesDebug extends AllInstances with DebugInstances
+	  import AllInstancesDebug._
 	
 	  println("usage: \"useCon { c => (scImplicit.load(SCURL(https://soundcloud.com/steve-cobby/heeds))).run(c) }\"")
 
