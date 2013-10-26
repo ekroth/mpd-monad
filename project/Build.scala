@@ -45,7 +45,12 @@ object build extends Build {
     val proguardSettings = Seq (
       useProguard in Android := true,
       proguardOptimizations in Android := Seq(
-        "-dontoptimize")
+        "-dontoptimize",
+        "-keep class com.github.ekroth.mpdmonad.**",
+        "-keep class com.github.ekroth.mpdmonad.*",
+        """-keep class scala.collection.SeqLike {
+    public protected *;
+        }""")
     )
 
     val fullAndroidSettings =
@@ -58,15 +63,14 @@ object build extends Build {
   lazy val mpdDroid = Project (
     General.name,
     file("android"),
-    settings = General.fullAndroidSettings ++ General.proguardSettings ++ AndroidNdk.settings
+    settings = General.fullAndroidSettings ++ General.proguardSettings
   ).dependsOn(common)
 
   lazy val mpdDroidFast = Project (
     General.name + "-fast",
     file("android"),
-    settings = General.fullAndroidSettings ++ AndroidNdk.settings ++ Seq(useProguard in Android := false)
+    settings = General.fullAndroidSettings ++ Seq(useProguard in Android := false)
   ).dependsOn(common)
-
   
   lazy val web = {
     import play.Project._

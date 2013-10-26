@@ -6,6 +6,8 @@ import Scalaz._
 trait Debug extends Base {
   import BaseInstances._
 
+  def debug(str: String) = println(str)
+
   def bogus(s: String) = MPDF[String] {
     x => MPDBogus(s"I don't care: $s.").left
   }
@@ -16,17 +18,17 @@ trait Debug extends Base {
 
   override def write(cmd: String) = for {
     r <- super.write(cmd)
-    _ = println(s"MPD: write -> $cmd")
+    _ = debug(s"MPD: write -> $cmd")
   } yield r
 
   override def read(): MPD[Vector[String]] = for {
     r <- super.read()
-    _ = println(s"MPD: read <- $r")
+    _ = debug(s"MPD: read <- $r")
   } yield r
 
   override def flush() = for {
     r <- super.flush()
-    _ = println("MPD: flush")
+    _ = debug("MPD: flush")
   } yield r
 }
 
