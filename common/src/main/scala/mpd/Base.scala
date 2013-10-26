@@ -49,7 +49,7 @@ trait Base {
 
 
   /** connect to address */
-  def connect(addr: String, port: Int) = MPDF[Unit] {
+  def connect(addr: String, port: Int) = MPDF {
     _ => {
       Connect(addr, port) match {
 	case \/-(x) => (x, ()).right
@@ -59,7 +59,7 @@ trait Base {
   }
 
   /** disconnect */
-  def disconnect() = MPD[Unit] {
+  def disconnect() = MPD {
     case MPDS(_, c@MPDC(a, s, r, o)) => {
       o.close
       r.close
@@ -70,12 +70,12 @@ trait Base {
   }
 
   /** clear input */
-  def clear() = MPD[Unit] {
+  def clear() = MPD {
     case x@MPDS(_, MPDC(_, socket, in, _)) => (x, in.skip(socket.getInputStream.available))
   }
 
   /** write */
-  def write(cmd: String) = MPD[Unit] {
+  def write(cmd: String) = MPD {
     case s@MPDS(_, MPDC(_, _, _, o)) => {
       o.write(cmd.getBytes(Encoding))
       (s copy (flushed = false), ())
@@ -101,7 +101,7 @@ trait Base {
   }
 
   /** flush output */
-  def flush() = MPD[Unit] {
+  def flush() = MPD {
     case s@MPDS(_, MPDC(_, _, _, o)) => {
       o.flush
       (s copy (flushed = true), ())
