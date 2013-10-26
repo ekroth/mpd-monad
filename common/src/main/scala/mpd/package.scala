@@ -4,6 +4,8 @@ package object mpd {
   val MPDMonadState = StateT.stateTMonadState[MPDS, MPDR]
   type MPDR[+A] = MPDFailure \/ A
   type MPD[+A] = StateT[MPDR, MPDS, A]
+  type ValueMap = Map[String, Seq[String]]
+  type Song = ValueMap
   
   object SubSystem extends Enumeration {
     type SubSystem = Value

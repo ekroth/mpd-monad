@@ -6,6 +6,7 @@ object build extends Build {
   val projName = "mpd"
   val sharedSettings = Seq(
     scalaVersion := "2.10.1",
+    javacOptions ++= Seq("-encoding", "UTF-8", "-source", "1.6", "-target", "1.6"),
     scalacOptions ++= Seq("-unchecked", "-deprecation", "-feature"))
 
   lazy val common = {
@@ -33,14 +34,11 @@ object build extends Build {
   }
 
   final object General {    
-    val settings = Defaults.defaultSettings ++ Seq (
-      name := "mpd-monad",
+    val name = "mpdm-droid"
+    val settings = Defaults.defaultSettings ++ sharedSettings ++ Seq (
       version := "0.1",
       versionCode := 0,
-      scalaVersion := "2.10.1",
       platformName in Android := "android-17",
-      javacOptions ++= Seq("-encoding", "UTF-8", "-source", "1.6", "-target", "1.6"),
-      scalacOptions ++= Seq("-unchecked", "-deprecation", "-feature"),
       libraryDependencies ++= Seq(
         "org.scaloid" %% "scaloid" % "2.3-8")
     )
@@ -58,13 +56,13 @@ object build extends Build {
   }
 
   lazy val mpdDroid = Project (
-    "mpd-droid",
+    General.name,
     file("android"),
     settings = General.fullAndroidSettings ++ General.proguardSettings ++ AndroidNdk.settings
   ).dependsOn(common)
 
   lazy val mpdDroidFast = Project (
-    "mpd-droid-fast",
+    General.name + "-fast",
     file("android"),
     settings = General.fullAndroidSettings ++ AndroidNdk.settings ++ Seq(useProguard in Android := false)
   ).dependsOn(common)

@@ -14,7 +14,7 @@ trait Debug extends Base {
     x => (x copy (flushed = false), s)
   }  
 
-  override def write(cmd: String): MPD[Unit] = for {
+  override def write(cmd: String) = for {
     r <- super.write(cmd)
     _ = println(s"MPD: write -> $cmd")
   } yield r
@@ -24,7 +24,7 @@ trait Debug extends Base {
     _ = println(s"MPD: read <- $r")
   } yield r
 
-  override def flush(): MPD[Unit] = for {
+  override def flush() = for {
     r <- super.flush()
     _ = println("MPD: flush")
   } yield r

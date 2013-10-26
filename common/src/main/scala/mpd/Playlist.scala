@@ -16,22 +16,22 @@ trait Playlist {
    */
 
   /** playlist info */
-  def playlistinfo()(implicit b: Base): MPD[Seq[Map[String, Seq[String]]]] = {
-    @annotation.tailrec def grouper[T <: Tuple2[_, _]](
-	xs: Seq[T], 
-	delim: Option[T], 
-	ys: Seq[Traversable[T]] = Seq.empty): Seq[Traversable[T]] = {
+  def playlistinfo()(implicit b: Base): MPD[Seq[ValueMap]] = {
+    @annotation.tailrec def grouper[T <: (_, _)](
+      xs: Seq[T],
+      delim: Option[T],
+      ys: Seq[Traversable[T]] = Seq.empty): Seq[Traversable[T]] = {
 
       if (xs.isEmpty || delim.isEmpty) ys
       else {
         val take = (xs.tail takeWhile { _._1 != delim.get._1 }) :+ xs.head
-        grouper(xs.drop(take.length), delim, ys :+ take)
+        grouper(xs drop take.length, delim, ys :+ take)
       }
     }
 
     b.wread("playlistinfo") map { s =>
       val vpairs = util.MpdParse.valuePairs(s)
-      for (p <- grouper(vpairs, vpairs.headOption)) yield p.toMap
+      grouper(vpairs, vpairs.headOption) map { _.toMap }
     }
   }
 

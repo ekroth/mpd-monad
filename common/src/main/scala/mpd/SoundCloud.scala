@@ -18,21 +18,21 @@ trait SC {
   import SCInstances._
 
   /** load track by id */
-  def load(id: SCTrack)(implicit b: Base): MPD[Unit] = for {
+  def load(id: SCTrack)(implicit b: Base) = for {
     _ <- b.clbegin
     _ <- b.writeln("load " + id.path)
     _ <- b.clend
   } yield ()
 
   /** load playlist by id */
-  def load(id: SCPlaylist)(implicit b: Base): MPD[Unit] = for {
+  def load(id: SCPlaylist)(implicit b: Base) = for {
     _ <- b.clbegin
     _ <- b.writeln("load " + id.path)
     _ <- b.clend
   } yield ()
 
   /** load playlist/track by url */
-  def load(url: SCURL)(implicit b: Base): MPD[Unit] = for {
+  def load(url: SCURL)(implicit b: Base) = for {
     _ <- b.clbegin
     _ <- b.writeln("load " + url.path)
     _ <- b.clend
