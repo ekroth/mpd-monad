@@ -9,7 +9,6 @@ import org.scaloid.common._
 
 import mpd._
 
-
 class MPDMonadLink extends SActivity {
   self =>
   import ExecutionContext.Implicits.global
@@ -27,40 +26,25 @@ class MPDMonadLink extends SActivity {
     val b = implicitly[Base]
     val sc = implicitly[SC]
 
+    val prefs = Preferences()
+    val host = prefs.host("192.168.1.2")
+    val port = prefs.port(6600)
+
     val f = future {
-      info("trying to connect")
-      val con = b.Connect("192.168.1.2", 6600)
+      info(s"connection to $host:$port")
+      val con = b.Connect(host, port)
 
       con map { x =>
         info("connection successful")
         runOnUiThread { 
           toast(R.string.send_toast)
-          toast(str)
         }
         sc.load(SCURL(str)) run(x)
-   //     sc.load(SCURL("""https://soundcloud.com/steve-cobby/heeds""")) run(x)
       }
     }
 
     f onComplete {
       case _ => runOnUiThread { finish() }
     }
-
-/*    contentView = new SVerticalLayout {
-      style {
-        case b: SButton => b.textColor(Color.RED).onClick(toast("Bang!"))
-        case t: STextView => t textSize 10.dip
-        case v => v.backgroundColor(Color.YELLOW)
-      }
-
-      STextView("I am 10 dip tall")
-      STextView("Me too")
-      STextView("I am taller than you") textSize 15.dip // overriding
-      SEditText("Yellow input field")
-      SButton("red")
-    } padding 20.dip
- */
-
-
   }
 }
