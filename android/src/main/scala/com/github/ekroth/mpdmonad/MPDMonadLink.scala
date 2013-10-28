@@ -14,7 +14,6 @@ class MPDMonadLink extends SActivity {
   import ExecutionContext.Implicits.global
   import AllInstances._
 
-
   onCreate {
     implicit val baseImplicit: Base = new Debug {
       override def debug(str: String) = info(str)
@@ -27,24 +26,23 @@ class MPDMonadLink extends SActivity {
     val sc = implicitly[SC]
 
     val prefs = Preferences()
-    val host = prefs.host("192.168.1.2")
-    val port = prefs.port(6600)
+    val host = prefs.host("127.0.0.1")
+    val port = prefs.port("6600").toInt
 
     val f = future {
-      info(s"connection to $host:$port")
       val con = b.Connect(host, port)
 
       con map { x =>
         info("connection successful")
-        runOnUiThread { 
-          toast(R.string.send_toast)
-        }
         sc.load(SCURL(str)) run(x)
       }
-    }
 
-    f onComplete {
-      case _ => runOnUiThread { finish() }
+      runOnUiThread { 
+        toast(
+          if (con.isRight) R.string.send_ok
+          else R.string.send_fail)
+        finish() 
+      }
     }
   }
 }

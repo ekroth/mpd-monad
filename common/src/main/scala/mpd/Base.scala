@@ -1,6 +1,6 @@
 package mpd
 
-import java.net.{ Socket => JSocket, InetSocketAddress }
+import java.net.{ Socket => JSocket, InetSocketAddress, ConnectException }
 import java.io.{ BufferedReader, InputStreamReader, OutputStream }
 
 import scalaz._
@@ -13,6 +13,7 @@ sealed trait MPDFailure
 final case class MPDUnknown(e: Exception) extends MPDFailure
 final case class MPDAck(err: String, num: String, cmd: String, msg: String) extends MPDFailure
 final case class MPDBogus(response: String) extends MPDFailure
+final case class MPDTimeout(err: String) extends MPDFailure
 
 trait Base {
   import BaseInstances._
@@ -27,18 +28,26 @@ trait Base {
   def Connect(addr: String, port: Int): MPDR[MPDS] = {
     val socket = new JSocket()
     val sockAddr = new InetSocketAddress(addr, port)
-    socket.connect(sockAddr, Timeout)
-    val in = new BufferedReader(new InputStreamReader(socket.getInputStream), BuffSize)
-    val line = in.readLine
-    line match {
-      case OKConnect(ver) => {
-        val input = new BufferedReader(new InputStreamReader(socket.getInputStream, Encoding), BuffSize)
-        val output = socket.getOutputStream()
-        MPDS(true, MPDC(sockAddr, socket, input, output)).right
+    socket.setSoTimeout(Timeout)
+
+    try {
+      socket.connect(sockAddr, Timeout)
+
+      val in = new BufferedReader(new InputStreamReader(socket.getInputStream), BuffSize)
+      val line = in.readLine
+      line match {
+        case OKConnect(ver) => {
+          val input = new BufferedReader(new InputStreamReader(socket.getInputStream, Encoding), BuffSize)
+          val output = socket.getOutputStream()
+          MPDS(true, MPDC(sockAddr, socket, input, output)).right
+        }
+        case ACK(err, num, cmd, msg) => MPDAck(err, num, cmd, msg).left
+        case x => MPDBogus(s"Unknown response: $x").left
       }
-      case ACK(err, num, cmd, msg) => MPDAck(err, num, cmd, msg).left
-      case x => MPDBogus(s"Unknown response: $x").left
+    } catch {
+      case e: Exception => MPD.handleException(e)
     }
+
   }
 
   /** connect to current address  */
@@ -93,9 +102,13 @@ trait Base {
           case x => readEnd(out :+ x)
 	}
       
-      readEnd(Vector.empty) match {
-	case \/-(x) => (s, x).right
-	case -\/(x) => x.left
+      try {
+        readEnd(Vector.empty) match {
+	  case \/-(x) => (s, x).right
+	  case -\/(x) => x.left
+        }
+      } catch {
+        case e: Exception => MPD.handleException(e)
       }
     }
   }
@@ -155,9 +168,19 @@ trait BaseInstances {
 
   /** MPD using try catch */
   final object MPD extends StateTFunctions with StateTInstances {
+    /** match exception to MPDFailure */
+    def handleException(e: Exception) = e match {
+      case t: ConnectException => MPDTimeout(t.toString).left
+      case e: Exception => MPDUnknown(e).left
+    }
+
     def apply[A](f: MPDS => (MPDS, A)): MPD[A] = new MPD[A] {
       def apply(s: MPDS) =
-	try { f(s).right } catch { case e: Exception => MPDUnknown(e).left }
+	try { 
+          f(s).right 
+        } catch {
+          case e: Exception => handleException(e)
+        }
     }
   }
 
@@ -170,7 +193,7 @@ trait BaseInstances {
   val OK = OKStr.r
   val ACK = """$ACKStr [(.*)@(.*)] \{(.*)\}(.*)""".r
   val Encoding = "UTF-8"
-  val Timeout = 10000
+  val Timeout = 5000
   val CmdBegin = "command_list_begin"
   val CmdEnd = "command_list_end"
 }
