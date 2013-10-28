@@ -21,28 +21,34 @@ class MPDMonadLink extends SActivity {
 
     val intent = getIntent
     val str = intent.getStringExtra(Intent.EXTRA_TEXT)
+    val r = R.string.soundcloud_reg.r2String.r
 
-    val b = implicitly[Base]
-    val sc = implicitly[SC]
+    r findFirstIn str match {
+      case Some(_) => {
+        val b = implicitly[Base]
+        val sc = implicitly[SC]
 
-    val prefs = Preferences()
-    val host = prefs.host("127.0.0.1")
-    val port = prefs.port("6600").toInt
+        val prefs = Preferences()
+        val host = prefs.host("127.0.0.1")
+        val port = prefs.port("6600").toInt
 
-    val f = future {
-      val con = b.Connect(host, port)
+        future {
+          val con = b.Connect(host, port)
 
-      con map { x =>
-        info("connection successful")
-        sc.load(SCURL(str)) run(x)
+          con map { x =>
+            info("connection successful")
+            sc.load(SCURL(str)) run(x)
+          }
+
+          runOnUiThread {
+            toast(
+              if (con.isRight) R.string.send_ok
+              else R.string.send_fail)
+            finish()
+          }
+        }
       }
-
-      runOnUiThread { 
-        toast(
-          if (con.isRight) R.string.send_ok
-          else R.string.send_fail)
-        finish() 
-      }
+      case _ => toast("invalid soundcloud link"); finish()
     }
   }
 }
