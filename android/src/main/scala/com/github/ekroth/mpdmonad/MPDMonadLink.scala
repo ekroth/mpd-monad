@@ -48,7 +48,7 @@ class MPDMonadLink extends SActivity {
           }
         }
       }
-      case _ => toast("invalid soundcloud link"); finish()
+      case _ => toast(R.string.soundcloud_invalid); finish() 
     }
   }
 }
